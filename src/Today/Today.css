@@ -169,9 +169,7 @@ html, body { height: 100%; overflow: hidden; }
   border: 1.5px solid #BFDBFE;
   display: flex; align-items: center; justify-content: center; font-size: 24px;
   box-shadow: 0 4px 14px rgba(26,58,107,0.1);
-  transition: transform 0.25s cubic-bezier(0.22,1,0.36,1);
 }
-.med-card:hover .med-icon-box { transform: scale(1.06) rotate(-4deg); }
 .med-icon-box.done    { background: linear-gradient(135deg, #F0F2F7, #ECEEF5) !important; border-color: #D8DCF0 !important; box-shadow: none; }
 .med-icon-box.skipped { background: linear-gradient(135deg, #FFF5F5, #FEF2F2) !important; border-color: #FECDD3 !important; box-shadow: none; }
 
@@ -267,7 +265,6 @@ html, body { height: 100%; overflow: hidden; }
 .blob1 { width: 70px; height: 70px; top: -20px; right: -20px; }
 .blob2 { width: 50px; height: 50px; bottom: -15px; left: -15px; }
 .med-visual-icon { font-size: 32px; filter: drop-shadow(0 4px 8px rgba(26,58,107,0.14)); margin-bottom: 2px; transition: transform 0.3s cubic-bezier(0.22,1,0.36,1); }
-.med-card:hover .med-visual-icon { transform: scale(1.12) translateY(-2px); }
 .med-visual-dose { font-size: 15px; font-weight: 800; letter-spacing: -0.5px; }
 .med-visual-name { font-size: 11px; color: #7A8FB5; font-weight: 600; }
 .med-visual-bar-wrap { width: 100%; margin-top: 6px; display: flex; flex-direction: column; gap: 4px; }
