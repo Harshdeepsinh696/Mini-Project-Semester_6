@@ -1,0 +1,26 @@
+.refill-ring-wrap {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+}
+.refill-ring-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+.refill-num {
+  font-size: 14px;
+  font-weight: 800;
+}
+.refill-label {
+  font-size: 8px;
+  color: #9096B0;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}

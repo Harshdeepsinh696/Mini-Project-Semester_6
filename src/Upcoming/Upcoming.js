@@ -1,5 +1,7 @@
-import { useState, useRef, useEffect } from "react";
-import Layout from "../Layout";
+import { useState } from "react";
+import Layout from "../Layout/Layout";
+import FilterTabs from "../Component/FilterTabs";
+import RefillRing from "../Component/RefillRing";
 import "./Upcoming.css";
 
 const upcomingSchedule = [
@@ -12,12 +14,16 @@ const upcomingSchedule = [
 ];
 
 const FIXED_GRAD_START = "#1A3A6B";
-const FIXED_GRAD_END = "#2563EB";
-const FIXED_COLOR = "#2563EB";
+const FIXED_GRAD_END   = "#2563EB";
+const FIXED_COLOR      = "#2563EB";
+const UPCOMING_TABS    = ["All", "Today", "Tomorrow", "This Week"];
 
 function groupByDate(items) {
   const map = {};
-  items.forEach(item => { if (!map[item.scheduledDate]) map[item.scheduledDate] = []; map[item.scheduledDate].push(item); });
+  items.forEach(item => {
+    if (!map[item.scheduledDate]) map[item.scheduledDate] = [];
+    map[item.scheduledDate].push(item);
+  });
   return map;
 }
 
@@ -35,39 +41,15 @@ function CalIcon() {
   return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="13" height="13"><rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>;
 }
 
-function RefillRing({ left, total, color, colorGradStart, colorGradEnd }) {
-  const pct = left / total, r = 18, circ = 2 * Math.PI * r, dash = circ * pct, isLow = left <= 7;
-  const ringId = `up-ring-${left}-${total}`;
-  return (
-    <div className="refill-ring-wrap">
-      <svg width="52" height="52" viewBox="0 0 52 52">
-        <defs>
-          <linearGradient id={ringId} x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor={isLow ? "#EF4444" : colorGradStart} />
-            <stop offset="100%" stopColor={isLow ? "#F87171" : colorGradEnd} />
-          </linearGradient>
-        </defs>
-        <circle cx="26" cy="26" r={r} fill="none" stroke="#E8EDFF" strokeWidth="5" />
-        <circle cx="26" cy="26" r={r} fill="none" stroke={`url(#${ringId})`} strokeWidth="5"
-          strokeDasharray={`${dash} ${circ}`} strokeLinecap="round" strokeDashoffset={circ * 0.25}
-          style={{ transition: "stroke-dasharray 0.8s cubic-bezier(0.22,1,0.36,1)" }} />
-      </svg>
-      <div className="refill-ring-inner">
-        <span className="refill-num" style={{ color: isLow ? "#EF4444" : color }}>{left}</span>
-        <span className="refill-label">left</span>
-      </div>
-    </div>
-  );
-}
-
 function CalendarStrip({ selectedDay, onSelect }) {
-  const days = ["Thu", "Fri", "Sat", "Sun", "Mon", "Tue", "Wed"];
-  const dates = [27, 28, 1, 2, 3, 4, 5];
+  const days   = ["Thu", "Fri", "Sat", "Sun", "Mon", "Tue", "Wed"];
+  const dates  = [27, 28, 1, 2, 3, 4, 5];
   const months = ["", "", "Mar", "Mar", "Mar", "Mar", "Mar"];
   return (
     <div className="cal-strip">
       {days.map((d, i) => (
-        <button key={d} className={`cal-day ${selectedDay === d ? "selected" : ""} ${d === "Thu" ? "today" : ""}`}
+        <button key={d}
+          className={`cal-day ${selectedDay === d ? "selected" : ""} ${d === "Thu" ? "today" : ""}`}
           onClick={() => onSelect(selectedDay === d ? null : d)}>
           <span className="cal-day-name">{d}</span>
           <span className="cal-day-num">{dates[i]}</span>
@@ -78,63 +60,30 @@ function CalendarStrip({ selectedDay, onSelect }) {
   );
 }
 
-function FilterTabs({ active, onChange }) {
-  const tabs = ["All", "Today", "Tomorrow", "This Week"];
-  const tabRefs = useRef([]), sliderRef = useRef(null), containerRef = useRef(null);
-  useEffect(() => {
-    const idx = tabs.indexOf(active), tab = tabRefs.current[idx], container = containerRef.current;
-    if (!tab || !container || !sliderRef.current) return;
-    const tr = tab.getBoundingClientRect(), cr = container.getBoundingClientRect();
-    sliderRef.current.style.width = tr.width + "px";
-    sliderRef.current.style.transform = `translateX(${tr.left - cr.left - 4}px)`;
-  }, [active]);
-  return (
-    <div className="filter-tabs" ref={containerRef}>
-      <div className="filter-slider" ref={sliderRef} />
-      {tabs.map((tab, i) => (
-        <button key={tab} ref={el => tabRefs.current[i] = el}
-          className={`ftab ${active === tab ? "active" : ""}`}
-          onClick={() => onChange(tab)}>{tab}</button>
-      ))}
-    </div>
-  );
-}
-
 function UpcomingCard({ med, onToggleReminder }) {
-  const refillPct = Math.round((med.refillLeft / med.refillTotal) * 100);
+  const refillPct  = Math.round((med.refillLeft / med.refillTotal) * 100);
   const isLowRefill = med.refillLeft <= 7;
-  const isToday = med.daysFromNow === 0, isTomorrow = med.daysFromNow === 1;
-
-  // ALL HARDCODED — same neutral blue-white for every card
-  const LEFT_BG = "linear-gradient(160deg, #EFF6FF 0%, #F8FAFF 100%)";
-  const LEFT_BORDER = "#D8E8FF";
-  const ICON_BG = "linear-gradient(135deg, #fff 0%, #EFF6FF 100%)";
-  const ICON_BORDER = "#BFDBFE";
-  const BADGE_BG = "#EFF6FF";
-  const BADGE_BDR = "#BFDBFE";
-  const RIGHT_BG = "linear-gradient(160deg, #F5F8FF 0%, #EFF4FF 100%)";
-  const RIGHT_BDR = "#D8E8FF";
-  const VCRD_BG = "linear-gradient(145deg, #EFF6FF 0%, #fff 60%)";
+  const isToday    = med.daysFromNow === 0;
+  const isTomorrow = med.daysFromNow === 1;
 
   return (
     <div className={`up-card ${isToday ? "today-card" : ""}`}
       style={{ "--med-grad-start": FIXED_GRAD_START, "--med-grad-end": FIXED_GRAD_END }}>
-      <div className="up-accent" style={{ background: `linear-gradient(180deg,${FIXED_GRAD_START},${FIXED_GRAD_END})` }} />
+      <div className="up-accent"
+        style={{ background: `linear-gradient(180deg,${FIXED_GRAD_START},${FIXED_GRAD_END})` }} />
 
-      {/* LEFT — same bg for every card */}
-      <div className="up-left" style={{ background: LEFT_BG, borderRightColor: LEFT_BORDER }}>
-        <div className="up-icon-box" style={{ background: ICON_BG, borderColor: ICON_BORDER }}>
-          {med.icon}
-        </div>
+      {/* LEFT */}
+      <div className="up-left">
+        <div className="up-icon-box">{med.icon}</div>
         <div className="up-identity">
           <div className="up-name">{med.name}</div>
-          <span className="up-cat-badge" style={{ background: BADGE_BG, color: med.color, borderColor: BADGE_BDR }}>
-            {med.category}
-          </span>
+          <span className="up-cat-badge" style={{ color: med.color }}>{med.category}</span>
           <div className="up-sub">{med.dose} · {med.qty}</div>
         </div>
         <div className="up-refill">
           <RefillRing
+            left={med.refillLeft}
+            total={med.refillTotal}
             color={FIXED_COLOR}
             colorGradStart={FIXED_GRAD_START}
             colorGradEnd={FIXED_GRAD_END}
@@ -157,27 +106,34 @@ function UpcomingCard({ med, onToggleReminder }) {
       <div className="up-center">
         <div className="up-date-row">
           <div className="up-date-chip" style={{
-            background: isToday ? "#EFF6FF" : isTomorrow ? "#FEF3C7" : "#F0F5FF",
-            borderColor: isToday ? "#BFDBFE" : isTomorrow ? "#FCD34D" : "#D1DEFF",
-            color: isToday ? med.color : isTomorrow ? "#B45309" : "#7A8FB5"
+            background:   isToday ? "#EFF6FF" : isTomorrow ? "#FEF3C7" : "#F0F5FF",
+            borderColor:  isToday ? "#BFDBFE" : isTomorrow ? "#FCD34D" : "#D1DEFF",
+            color:        isToday ? med.color  : isTomorrow ? "#B45309" : "#7A8FB5"
           }}><CalIcon />{med.scheduledDate}</div>
-          {isToday && <span className="today-badge">📍 Today</span>}
+          {isToday    && <span className="today-badge">📍 Today</span>}
           {isTomorrow && <span className="tomorrow-badge">⏰ Tomorrow</span>}
         </div>
         <div className="up-time-row">
-          <span className="up-time" style={{ backgroundImage: `linear-gradient(135deg,${FIXED_GRAD_START} 0%,${FIXED_GRAD_END} 100%)` }}>
+          <span className="up-time"
+            style={{ backgroundImage: `linear-gradient(135deg,${FIXED_GRAD_START} 0%,${FIXED_GRAD_END} 100%)` }}>
             {med.time.split(" ")[0]}
           </span>
           <span className="up-ampm">{med.time.split(" ")[1]}</span>
         </div>
         <div className="up-note">
-          <span className="note-bar" style={{ background: `linear-gradient(180deg,${FIXED_GRAD_START},${FIXED_GRAD_END})` }} />
+          <span className="note-bar"
+            style={{ background: `linear-gradient(180deg,${FIXED_GRAD_START},${FIXED_GRAD_END})` }} />
           {med.note}
         </div>
         <div className="tags-row">
           <span className="tag freq">{med.frequency}</span>
           <span className="tag info-tag">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" width="10" height="10"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+              strokeLinecap="round" width="10" height="10">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
             {med.sideEffect}
           </span>
         </div>
@@ -188,10 +144,11 @@ function UpcomingCard({ med, onToggleReminder }) {
         </div>
       </div>
 
-      {/* RIGHT — same bg for every card */}
-      <div className="up-right" style={{ background: RIGHT_BG, borderLeftColor: RIGHT_BDR }}>
+      {/* RIGHT */}
+      <div className="up-right">
         <div className="up-right-top">
-          <button className={`reminder-btn ${med.reminderSet ? "active" : ""}`}
+          <button
+            className={`reminder-btn ${med.reminderSet ? "active" : ""}`}
             onClick={() => onToggleReminder(med.id)}
             style={med.reminderSet ? { background: "#EFF6FF", borderColor: "#BFDBFE", color: med.color } : {}}>
             <BellIcon filled={med.reminderSet} color={med.color} />
@@ -200,7 +157,7 @@ function UpcomingCard({ med, onToggleReminder }) {
           <button className="up-edit-btn"><EditIcon /></button>
         </div>
         <div className="right-divider" />
-        <div className="up-visual-card" style={{ background: VCRD_BG, borderColor: "#BFDBFE" }}>
+        <div className="up-visual-card" style={{ borderColor: "#BFDBFE" }}>
           <div className="med-visual-blob blob1" style={{ background: FIXED_GRAD_START }} />
           <div className="med-visual-blob blob2" style={{ background: FIXED_GRAD_END }} />
           <div className="up-visual-icon">{med.icon}</div>
@@ -208,9 +165,15 @@ function UpcomingCard({ med, onToggleReminder }) {
           <div className="up-visual-name">{med.name}</div>
           <div className="med-visual-bar-wrap">
             <div className="med-visual-bar-track">
-              <div className="med-visual-bar-fill" style={{ width: `${refillPct}%`, background: isLowRefill ? "#EF4444" : `linear-gradient(90deg,${FIXED_GRAD_START},${FIXED_GRAD_END})` }} />
+              <div className="med-visual-bar-fill" style={{
+                width: `${refillPct}%`,
+                background: isLowRefill ? "#EF4444" : `linear-gradient(90deg,${FIXED_GRAD_START},${FIXED_GRAD_END})`
+              }} />
             </div>
-            <span className="med-visual-bar-label" style={{ color: isLowRefill ? "#EF4444" : med.color }}>{med.refillLeft}/{med.refillTotal} pills</span>
+            <span className="med-visual-bar-label"
+              style={{ color: isLowRefill ? "#EF4444" : med.color }}>
+              {med.refillLeft}/{med.refillTotal} pills
+            </span>
           </div>
         </div>
       </div>
@@ -220,52 +183,104 @@ function UpcomingCard({ med, onToggleReminder }) {
 
 export default function Upcoming() {
   const [activeFilter, setActiveFilter] = useState("All");
-  const [selectedDay, setSelectedDay] = useState(null);
-  const [meds, setMeds] = useState(upcomingSchedule);
-  const toggleReminder = id => setMeds(prev => prev.map(m => m.id === id ? { ...m, reminderSet: !m.reminderSet } : m));
+  const [selectedDay, setSelectedDay]   = useState(null);
+  const [meds, setMeds]                 = useState(upcomingSchedule);
+
+  const toggleReminder = id =>
+    setMeds(prev => prev.map(m => m.id === id ? { ...m, reminderSet: !m.reminderSet } : m));
+
   const filtered = meds.filter(m => {
     if (selectedDay) return m.scheduledDay === selectedDay;
-    if (activeFilter === "Today") return m.daysFromNow === 0;
-    if (activeFilter === "Tomorrow") return m.daysFromNow === 1;
+    if (activeFilter === "Today")     return m.daysFromNow === 0;
+    if (activeFilter === "Tomorrow")  return m.daysFromNow === 1;
     if (activeFilter === "This Week") return m.daysFromNow <= 6;
     return true;
   });
-  const grouped = groupByDate(filtered);
-  const totalCount = meds.length, todayCount = meds.filter(m => m.daysFromNow === 0).length;
-  const tomorrowCount = meds.filter(m => m.daysFromNow === 1).length, remindersOn = meds.filter(m => m.reminderSet).length;
+
+  const grouped       = groupByDate(filtered);
+  const totalCount    = meds.length;
+  const todayCount    = meds.filter(m => m.daysFromNow === 0).length;
+  const tomorrowCount = meds.filter(m => m.daysFromNow === 1).length;
+  const remindersOn   = meds.filter(m => m.reminderSet).length;
+
   return (
     <Layout>
       <div className="main">
         <div className="main-header">
-          <div className="greeting"><h1>Upcoming Medicines 🗓️</h1><p>{totalCount} doses scheduled for the next 7 days</p></div>
+          <div className="greeting">
+            <h1>Upcoming Medicines 🗓️</h1>
+            <p>{totalCount} doses scheduled for the next 7 days</p>
+          </div>
           <div className="date-chip">📅 <b>Thursday</b>, Feb 27</div>
         </div>
+
         <div className="stats-row">
-          <div className="stat-card total"><div className="stat-icon-box total">💊</div><div className="stat-label total">Total Upcoming</div><div className="stat-value">{totalCount}</div></div>
-          <div className="stat-card today-card"><div className="stat-icon-box today-card">📍</div><div className="stat-label today-card">Due Today</div><div className="stat-value">{todayCount}</div></div>
-          <div className="stat-card tomorrow-card"><div className="stat-icon-box tomorrow-card">⏰</div><div className="stat-label tomorrow-card">Tomorrow</div><div className="stat-value">{tomorrowCount}</div></div>
-          <div className="stat-card reminder-card"><div className="stat-icon-box reminder-card">🔔</div><div className="stat-label reminder-card">Reminders On</div><div className="stat-value">{remindersOn}</div></div>
-          <button className="add-btn"><div className="add-btn-label">Add<br />Medicine</div><div className="add-btn-circle">+</div></button>
+          <div className="stat-card total">
+            <div className="stat-icon-box total">💊</div>
+            <div className="stat-text">
+              <div className="stat-label total">Total Upcoming</div>
+              <div className="stat-value">{totalCount}</div>
+            </div>
+          </div>
+          <div className="stat-card today-card">
+            <div className="stat-icon-box today-card">📍</div>
+            <div className="stat-text">
+              <div className="stat-label today-card">Due Today</div>
+              <div className="stat-value">{todayCount}</div>
+            </div>
+          </div>
+          <div className="stat-card tomorrow-card">
+            <div className="stat-icon-box tomorrow-card">⏰</div>
+            <div className="stat-text">
+              <div className="stat-label tomorrow-card">Tomorrow</div>
+              <div className="stat-value">{tomorrowCount}</div>
+            </div>
+          </div>
+          <div className="stat-card reminder-card">
+            <div className="stat-icon-box reminder-card">🔔</div>
+            <div className="stat-text">
+              <div className="stat-label reminder-card">Reminders On</div>
+              <div className="stat-value">{remindersOn}</div>
+            </div>
+          </div>
+          <button className="add-btn">
+            <div className="add-btn-label">Add<br />Medicine</div>
+            <div className="add-btn-circle">+</div>
+          </button>
         </div>
+
         <div className="cal-section">
           <div className="cal-section-header">
             <span className="cal-title">Jump to Day</span>
-            {selectedDay && <button className="cal-clear" onClick={() => setSelectedDay(null)}>Clear filter ✕</button>}
+            {selectedDay && (
+              <button className="cal-clear" onClick={() => setSelectedDay(null)}>
+                Clear filter ✕
+              </button>
+            )}
           </div>
           <CalendarStrip selectedDay={selectedDay} onSelect={setSelectedDay} />
         </div>
+
         <div className="list-head">
           <div className="list-title">Schedule</div>
-          <FilterTabs active={activeFilter} onChange={f => { setActiveFilter(f); setSelectedDay(null); }} />
+          <FilterTabs
+            tabs={UPCOMING_TABS}
+            active={activeFilter}
+            onChange={f => { setActiveFilter(f); setSelectedDay(null); }}
+          />
         </div>
+
         <div className="cards-container">
           {Object.keys(grouped).length === 0
             ? <div className="empty-state">No medicines scheduled for this period</div>
             : Object.entries(grouped).map(([dateLabel, items]) => (
-              <div key={dateLabel} className="date-group">
-                {items.map(med => <UpcomingCard key={med.id} med={med} onToggleReminder={toggleReminder} />)}
-              </div>
-            ))}
+                <div key={dateLabel} className="date-group">
+                  {items.map(med =>
+                    <UpcomingCard key={med.id} med={med} onToggleReminder={toggleReminder} />
+                  )}
+                </div>
+              ))
+          }
         </div>
       </div>
     </Layout>
