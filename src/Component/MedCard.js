@@ -28,13 +28,18 @@ function ClockIcon({ size = 12, color = "currentColor" }) {
   );
 }
 
-function BellIcon({ active, color }) {
+function BellIcon({ active }) {
   return (
-    <svg viewBox="0 0 24 24"
-      fill={active ? color : "none"}
-      stroke={active ? color : "currentColor"}
-      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-      width="13" height="13">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      width="13"
+      height="13"
+    >
       <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
       <path d="M13.73 21a2 2 0 0 1-3.46 0" />
     </svg>
@@ -44,11 +49,11 @@ function BellIcon({ active, color }) {
 export default function MedCard({ med, onTake, onSkip, onToggleReminder }) {
   const [reminderSet, setReminderSet] = useState(med.reminderSet ?? false);
 
-  const isTaken   = med.status === "taken";
+  const isTaken = med.status === "taken";
   const isSkipped = med.status === "skipped";
-  const isDone    = isTaken || isSkipped;
+  const isDone = isTaken || isSkipped;
   const refillPct = Math.round((med.refillLeft / med.refillTotal) * 100);
-  const isLow     = med.refillLeft <= 7;
+  const isLow = med.refillLeft <= 7;
 
   return (
     <div
@@ -137,7 +142,7 @@ export default function MedCard({ med, onTake, onSkip, onToggleReminder }) {
         </div>
         <div className="tags-row">
           <span className="tag freq">{med.frequency}</span>
-          {isTaken   && <span className="tag taken-tag">✓ Taken</span>}
+          {isTaken && <span className="tag taken-tag">✓ Taken</span>}
           {isSkipped && <span className="tag skipped-tag">✕ Skipped</span>}
           {!isDone && (
             <span className="tag pend-tag">
@@ -165,9 +170,9 @@ export default function MedCard({ med, onTake, onSkip, onToggleReminder }) {
       {/* RIGHT */}
       <div className="med-right">
         <div className="right-top-row">
-          {isTaken   && <div className="done-badge">✓ TAKEN</div>}
+          {isTaken && <div className="done-badge">✓ TAKEN</div>}
           {isSkipped && <div className="skipped-badge">✕ SKIPPED</div>}
-          {!isDone   && <div style={{ flex: 1 }} />}
+          {!isDone && <div style={{ flex: 1 }} />}
 
           {/* Reminder Button */}
           <button
@@ -177,13 +182,8 @@ export default function MedCard({ med, onTake, onSkip, onToggleReminder }) {
               setReminderSet(prev => !prev);
               onToggleReminder && onToggleReminder(med.id);
             }}
-            style={reminderSet ? {
-              background: `${med.color}12`,
-              borderColor: `${med.color}50`,
-              color: "#2563EB",
-            } : {}}
           >
-            <BellIcon active={reminderSet} color={med.color || FIXED_COLOR} />
+            <BellIcon />
 
           </button>
 
