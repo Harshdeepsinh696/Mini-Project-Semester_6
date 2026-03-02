@@ -95,8 +95,8 @@
 .action-btn.skip:hover { background: linear-gradient(135deg, #FEE2E2, #FECACA); }
 .action-btn.take { background: linear-gradient(135deg, #F0FFF8, #F0FDF4); border-color: #86EFAC; color: #16A34A; }
 .action-btn.take:hover { background: linear-gradient(135deg, #DCFCE7, #BBF7D0); }
-.action-btn.undo { background: linear-gradient(135deg, #F8F9FF, #F1F5FF); border-color: #D1DEFF; color: #7A8FB5; flex: unset; padding: 0 14px; }
-.action-btn.undo:hover { background: linear-gradient(135deg, #EEF3FF, #E0ECFF); border-color: #93C5FD; }
+.action-btn.undo { background: linear-gradient(135deg, #F8F9FF, #F1F5FF); border: 1.5px solid #76b2fd; color: #145bb2; flex: unset; padding: 0 14px; }
+.action-btn.undo:hover { background: linear-gradient(135deg, #EEF3FF, #E0ECFF); border: 1.5px solid #56a4fe; }
 
 /* ── CENTER PANEL ── */
 .med-center { display: flex; flex-direction: column; gap: 9px; padding: 20px 22px; }
