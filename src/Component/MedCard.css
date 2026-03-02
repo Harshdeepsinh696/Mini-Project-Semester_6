@@ -160,30 +160,164 @@
   border-radius: 10px; padding: 5px 12px; font-size: 10px; font-weight: 800;
   color: #DC2626; letter-spacing: 0.8px; white-space: nowrap;
 }
+
+/* ══════════════════════════════════════
+   REMINDER BUTTON — Attractive
+══════════════════════════════════════ */
 .reminder-btn {
-  width: 34px;
-  height: 30px;
-  border-radius: 8px;
-  background: #F1F5FF;
-  border: 1.5px solid #D1DEFF;
+  position: relative;
+  width: 36px;
+  height: 32px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #F0F5FF 0%, #E8EFFE 100%);
+  border: 1.5px solid #C4D4FF;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #2563EB; /* default icon color */
-  transition: all 0.25s ease;
+  color: #6B8BD4;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  overflow: visible;
 }
 
-/* ACTIVE STATE */
+/* Shine layer */
+.reminder-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255,255,255,0.65) 0%, transparent 55%);
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+/* Pulse ring */
+.reminder-btn::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 14px;
+  border: 2px solid transparent;
+  transition: all 0.35s ease;
+  pointer-events: none;
+}
+
+/* Hover (inactive) */
+.reminder-btn:not(.active):hover {
+  transform: translateY(-2px) scale(1.07);
+  background: linear-gradient(135deg, #E4EEFF 0%, #D8E7FF 100%);
+  border-color: #93B4FF;
+  color: #2563EB;
+  box-shadow:
+    0 4px 14px rgba(37, 99, 235, 0.2),
+    0 1px 4px rgba(37, 99, 235, 0.1);
+}
+.reminder-btn:not(.active):hover::after {
+  border-color: rgba(37, 99, 235, 0.22);
+}
+
+/* Bell rings on hover (inactive only) */
+.reminder-btn:not(.active):hover .bell-icon {
+  animation: bellRing 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+/* ── ACTIVE STATE ── */
 .reminder-btn.active {
-  background: #2563EB; /* blue background */
-  border-color: #2563EB;
-  color: #ffffff;      /* bell becomes white */
+  background: linear-gradient(135deg, #1D4ED8 0%, #2563EB 55%, #3B82F6 100%);
+  border-color: #1A4ACC;
+  color: #ffffff;
+  box-shadow:
+    0 4px 18px rgba(37, 99, 235, 0.5),
+    0 2px 6px rgba(37, 99, 235, 0.3),
+    inset 0 1px 0 rgba(255,255,255,0.22);
+}
+.reminder-btn.active::before {
+  background: linear-gradient(135deg, rgba(255,255,255,0.28) 0%, transparent 50%);
+}
+.reminder-btn.active::after {
+  border-color: rgba(37, 99, 235, 0.4);
+  inset: -5px;
+  animation: pulseRing 2s ease-out infinite;
+}
+.reminder-btn.active:hover {
+  transform: translateY(-2px) scale(1.07);
+  background: linear-gradient(135deg, #1D4ED8 0%, #2563EB 55%, #3B82F6 100%);
+  border-color: #1A4ACC;
+  color: #ffffff;
+  box-shadow:
+    0 4px 14px rgba(37, 99, 235, 0.45),
+    0 1px 4px rgba(37, 99, 235, 0.2),
+    inset 0 1px 0 rgba(255,255,255,0.22);
 }
 
-.reminder-btn:hover {
-  transform: scale(1.05);
+/* Bell swings on activate */
+.reminder-btn.active .bell-icon {
+  animation: bellActive 0.65s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 }
+
+/* Press */
+.reminder-btn:active {
+  transform: scale(0.92) translateY(0) !important;
+  transition: transform 0.1s ease !important;
+}
+
+/* Bell wrapper */
+.bell-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: top center;
+  position: relative;
+  z-index: 1;
+}
+
+/* Amber notification dot — only visible when active */
+.bell-dot {
+  display: none;
+  position: absolute;
+  top: 4px;
+  right: 5px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #FDE68A, #F59E0B);
+  border: 1.5px solid rgba(255,255,255,0.7);
+  box-shadow: 0 0 6px rgba(245,158,11,0.9), 0 0 12px rgba(245,158,11,0.4);
+  z-index: 3;
+  pointer-events: none;
+}
+.reminder-btn.active .bell-dot {
+  display: block;
+}
+
+/* ── KEYFRAMES ── */
+@keyframes bellRing {
+  0%  { transform: rotate(0deg);   }
+  15% { transform: rotate(13deg);  }
+  30% { transform: rotate(-11deg); }
+  45% { transform: rotate(8deg);   }
+  60% { transform: rotate(-5deg);  }
+  75% { transform: rotate(3deg);   }
+  100%{ transform: rotate(0deg);   }
+}
+
+@keyframes bellActive {
+  0%  { transform: rotate(0deg) scale(1);     }
+  20% { transform: rotate(-16deg) scale(1.12); }
+  40% { transform: rotate(13deg) scale(1.12); }
+  60% { transform: rotate(-8deg) scale(1.05); }
+  80% { transform: rotate(5deg) scale(1.02);  }
+  100%{ transform: rotate(0deg) scale(1);     }
+}
+
+
+@keyframes dotPulse {
+  0%, 100% { opacity: 1;   box-shadow: 0 0 6px rgba(245,158,11,0.9), 0 0 12px rgba(245,158,11,0.4); }
+  50%       { opacity: 0.7; box-shadow: 0 0 10px rgba(245,158,11,1),  0 0 20px rgba(245,158,11,0.6); }
+}
+
+/* ══════════════════════════════════════ */
+
 .edit-btn-right {
   width: 30px; height: 30px; border-radius: 8px;
   background: #F1F5FF; border: 1.5px solid #D1DEFF;
