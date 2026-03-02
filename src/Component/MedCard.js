@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./MedCard.css";
 import RefillRing from "./RefillRing";
 
@@ -28,12 +28,27 @@ function ClockIcon({ size = 12, color = "currentColor" }) {
   );
 }
 
-export default function MedCard({ med, onTake, onSkip }) {
-  const isTaken = med.status === "taken";
+function BellIcon({ active, color }) {
+  return (
+    <svg viewBox="0 0 24 24"
+      fill={active ? color : "none"}
+      stroke={active ? color : "currentColor"}
+      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+      width="13" height="13">
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+    </svg>
+  );
+}
+
+export default function MedCard({ med, onTake, onSkip, onToggleReminder }) {
+  const [reminderSet, setReminderSet] = useState(med.reminderSet ?? false);
+
+  const isTaken   = med.status === "taken";
   const isSkipped = med.status === "skipped";
-  const isDone = isTaken || isSkipped;
+  const isDone    = isTaken || isSkipped;
   const refillPct = Math.round((med.refillLeft / med.refillTotal) * 100);
-  const isLow = med.refillLeft <= 7;
+  const isLow     = med.refillLeft <= 7;
 
   return (
     <div
@@ -50,7 +65,11 @@ export default function MedCard({ med, onTake, onSkip }) {
         <div className="med-identity">
           <div className="med-name">{med.name}</div>
           <span className="med-category-badge"
-            style={{ background: "#EFF6FF", color: med.color, borderColor: "#BFDBFE" }}>
+            style={{
+              background: `${med.color}15`,
+              color: med.color,
+              borderColor: `${med.color}40`
+            }}>
             {med.category}
           </span>
           <div className="med-sub">{med.dose} · {med.qty}</div>
@@ -118,7 +137,7 @@ export default function MedCard({ med, onTake, onSkip }) {
         </div>
         <div className="tags-row">
           <span className="tag freq">{med.frequency}</span>
-          {isTaken && <span className="tag taken-tag">✓ Taken</span>}
+          {isTaken   && <span className="tag taken-tag">✓ Taken</span>}
           {isSkipped && <span className="tag skipped-tag">✕ Skipped</span>}
           {!isDone && (
             <span className="tag pend-tag">
@@ -146,9 +165,28 @@ export default function MedCard({ med, onTake, onSkip }) {
       {/* RIGHT */}
       <div className="med-right">
         <div className="right-top-row">
-          {isTaken && <div className="done-badge">✓ TAKEN</div>}
+          {isTaken   && <div className="done-badge">✓ TAKEN</div>}
           {isSkipped && <div className="skipped-badge">✕ SKIPPED</div>}
-          {!isDone && <div style={{ flex: 1 }} />}
+          {!isDone   && <div style={{ flex: 1 }} />}
+
+          {/* Reminder Button */}
+          <button
+            className={`reminder-btn ${reminderSet ? "active" : ""}`}
+            onClick={e => {
+              e.stopPropagation();
+              setReminderSet(prev => !prev);
+              onToggleReminder && onToggleReminder(med.id);
+            }}
+            style={reminderSet ? {
+              background: `${med.color}12`,
+              borderColor: `${med.color}50`,
+              color: "#2563EB",
+            } : {}}
+          >
+            <BellIcon active={reminderSet} color={med.color || FIXED_COLOR} />
+
+          </button>
+
           <button className="edit-btn-right"><EditIcon /></button>
         </div>
         <div className="adherence-block">
