@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Today    from "./Today/Today";
 import Upcoming from "./Upcoming/Upcoming";
+import History from "./History/History";  
 
 export default function App() {
   return (
@@ -9,7 +10,7 @@ export default function App() {
         <Route path="/"         element={<Navigate to="/today" replace />} />
         <Route path="/today"    element={<Today />} />
         <Route path="/upcoming" element={<Upcoming />} />
-        <Route path="/history"  element={<Today />} />
+        <Route path="/history"  element={<History />} />
         <Route path="/settings" element={<Today />} />
         <Route path="*"         element={<Navigate to="/today" replace />} />
       </Routes>
