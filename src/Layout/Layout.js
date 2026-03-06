@@ -89,10 +89,11 @@ function SidebarContent({ onClose }) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Derive active label from current path
+  // ✅ FIX: return null (not "Today") when path doesn't match any nav route
+  // This prevents "Today" from appearing active on /addMedicine or other pages
   const activeLabel = Object.entries(NAV_ROUTES).find(
     ([, path]) => location.pathname === path
-  )?.[0] ?? "Today";
+  )?.[0] ?? null;                                         // ← CHANGED: was ?? "Today"
 
   const go = (label) => {
     navigate(NAV_ROUTES[label] ?? "/today");
@@ -175,7 +176,7 @@ export default function Layout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
-  // Derive page label for mobile topbar
+  // Mobile topbar label — show "Add Medicine" on that page, else nav label
   const pageLabel = Object.entries(NAV_ROUTES).find(
     ([, path]) => location.pathname === path
   )?.[0] ?? "MediCare";

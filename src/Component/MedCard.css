@@ -51,7 +51,6 @@
 }
 .med-card.done    .med-left { background: linear-gradient(160deg, #F4F5F9 0%, #ECEEF5 100%); border-right-color: #E0E3EC; }
 .med-card.skipped .med-left { background: linear-gradient(160deg, #FFF5F5 0%, #FEF2F2 100%); border-right-color: #FECDD3; }
-
 .med-icon-wrap { display: flex; }
 .med-icon-box {
   width: 50px; height: 50px; border-radius: 14px;
@@ -62,7 +61,6 @@
 }
 .med-icon-box.done    { background: linear-gradient(135deg, #F0F2F7, #ECEEF5) !important; border-color: #D8DCF0 !important; box-shadow: none; }
 .med-icon-box.skipped { background: linear-gradient(135deg, #FFF5F5, #FEF2F2) !important; border-color: #FECDD3 !important; box-shadow: none; }
-
 .med-identity { display: flex; flex-direction: column; gap: 4px; }
 .med-name  { font-size: 16px; font-weight: 800; color: #1A3A6B; }
 .med-category-badge {
@@ -72,7 +70,6 @@
   background: #EFF6FF; border: 1.5px solid #BFDBFE; width: fit-content;
 }
 .med-sub { font-size: 11px; color: #7A8FB5; font-weight: 500; }
-
 .med-refill {
   display: flex; align-items: center; gap: 10px;
   background: rgba(255,255,255,0.85); border: 1px solid #D8E8FF;
@@ -81,7 +78,6 @@
 .refill-info  { display: flex; flex-direction: column; gap: 2px; }
 .refill-title { font-size: 11px; font-weight: 700; }
 .refill-sub   { font-size: 10px; color: #9096B0; font-weight: 500; }
-
 .action-btns { display: flex; gap: 8px; }
 .action-btn {
   flex: 1; height: 36px; border-radius: 10px; border: 1.5px solid;
@@ -139,6 +135,45 @@
   border-radius: 8px; width: fit-content; font-size: 12px; font-weight: 600;
 }
 
+/* ── DOCTOR & INSTRUCTIONS (NEW) ── */
+.med-extra-info {
+  display: flex; flex-direction: column; gap: 6px;
+  padding: 10px 12px;
+  background: linear-gradient(135deg, #F8FAFF 0%, #F0F5FF 100%);
+  border: 1.5px solid #E0EAFF; border-radius: 14px;
+}
+.med-extra-row  { display: flex; align-items: center; gap: 8px; }
+.med-extra-icon {
+  width: 24px; height: 24px; border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; flex-shrink: 0;
+}
+.med-extra-content { display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0; }
+.med-extra-label {
+  font-size: 10px; font-weight: 700; color: #9096B0;
+  text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; flex-shrink: 0;
+}
+.med-extra-value {
+  font-size: 11.5px; font-weight: 700; color: #1A3A6B;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.med-instructions {
+  background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+  border: 1.5px solid #FDE68A; border-radius: 12px; padding: 9px 12px;
+}
+.med-instructions-header {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 10px; font-weight: 800; color: #B45309;
+  text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 5px;
+}
+.med-instructions-text {
+  font-size: 11.5px; color: #78350F; font-weight: 500; line-height: 1.5;
+}
+.med-card.done    .med-extra-info,
+.med-card.skipped .med-extra-info    { opacity: 0.7; }
+.med-card.done    .med-instructions,
+.med-card.skipped .med-instructions  { opacity: 0.7; }
+
 /* ── RIGHT PANEL ── */
 .med-right {
   display: flex; flex-direction: column; gap: 12px;
@@ -148,7 +183,6 @@
 }
 .med-card.done    .med-right { background: linear-gradient(160deg, #F8F9FC, #F4F5FA); border-left-color: #E4E7F0; }
 .med-card.skipped .med-right { background: linear-gradient(160deg, #FFFAFA, #FEF5F5); border-left-color: #FECDD3; }
-
 .right-top-row { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
 .done-badge {
   background: linear-gradient(135deg, #D1FAE5, #ECFDF5); border: 1.5px solid #6EE7B7;
@@ -160,200 +194,46 @@
   border-radius: 10px; padding: 5px 12px; font-size: 10px; font-weight: 800;
   color: #DC2626; letter-spacing: 0.8px; white-space: nowrap;
 }
-
-/* ══════════════════════════════════════
-   REMINDER BUTTON — Attractive
-══════════════════════════════════════ */
 .reminder-btn {
-  position: relative;
-  width: 36px;
-  height: 32px;
-  border-radius: 10px;
+  position: relative; width: 36px; height: 32px; border-radius: 10px;
   background: linear-gradient(135deg, #F0F5FF 0%, #E8EFFE 100%);
-  border: 1.5px solid #C4D4FF;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: #6B8BD4;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  overflow: visible;
+  border: 1.5px solid #C4D4FF; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: #6B8BD4; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); overflow: visible;
 }
-
-/* Shine layer */
-.reminder-btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(135deg, rgba(255,255,255,0.65) 0%, transparent 55%);
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
-
-/* Pulse ring */
-.reminder-btn::after {
-  content: '';
-  position: absolute;
-  inset: -4px;
-  border-radius: 14px;
-  border: 2px solid transparent;
-  transition: all 0.35s ease;
-  pointer-events: none;
-}
-
-/* Hover (inactive) */
-.reminder-btn:not(.active):hover {
-  transform: translateY(-2px) scale(1.07);
-  background: linear-gradient(135deg, #E4EEFF 0%, #D8E7FF 100%);
-  border-color: #93B4FF;
-  color: #2563EB;
-  box-shadow:
-    0 4px 14px rgba(37, 99, 235, 0.2),
-    0 1px 4px rgba(37, 99, 235, 0.1);
-}
-.reminder-btn:not(.active):hover::after {
-  border-color: rgba(37, 99, 235, 0.22);
-}
-
-/* Bell rings on hover (inactive only) */
-.reminder-btn:not(.active):hover .bell-icon {
-  animation: bellRing 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-}
-
-/* ── ACTIVE STATE ── */
-.reminder-btn.active {
-  background: linear-gradient(135deg, #1D4ED8 0%, #2563EB 55%, #3B82F6 100%);
-  border-color: #1A4ACC;
-  color: #ffffff;
-  box-shadow:
-    0 4px 18px rgba(37, 99, 235, 0.5),
-    0 2px 6px rgba(37, 99, 235, 0.3),
-    inset 0 1px 0 rgba(255,255,255,0.22);
-}
-.reminder-btn.active::before {
-  background: linear-gradient(135deg, rgba(255,255,255,0.28) 0%, transparent 50%);
-}
-.reminder-btn.active::after {
-  border-color: rgba(37, 99, 235, 0.4);
-  inset: -5px;
-  animation: pulseRing 2s ease-out infinite;
-}
-.reminder-btn.active:hover {
-  transform: translateY(-2px) scale(1.07);
-  background: linear-gradient(135deg, #1D4ED8 0%, #2563EB 55%, #3B82F6 100%);
-  border-color: #1A4ACC;
-  color: #ffffff;
-  box-shadow:
-    0 4px 14px rgba(37, 99, 235, 0.45),
-    0 1px 4px rgba(37, 99, 235, 0.2),
-    inset 0 1px 0 rgba(255,255,255,0.22);
-}
-
-/* Bell swings on activate */
-.reminder-btn.active .bell-icon {
-  animation: bellActive 0.65s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-}
-
-/* Press */
-.reminder-btn:active {
-  transform: scale(0.92) translateY(0) !important;
-  transition: transform 0.1s ease !important;
-}
-
-/* Bell wrapper */
-.bell-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transform-origin: top center;
-  position: relative;
-  z-index: 1;
-}
-
-/* Amber notification dot — only visible when active */
-.bell-dot {
-  display: none;
-  position: absolute;
-  top: 4px;
-  right: 5px;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 40% 35%, #FDE68A, #F59E0B);
-  border: 1.5px solid rgba(255,255,255,0.7);
-  box-shadow: 0 0 6px rgba(245,158,11,0.9), 0 0 12px rgba(245,158,11,0.4);
-  z-index: 3;
-  pointer-events: none;
-}
-.reminder-btn.active .bell-dot {
-  display: block;
-}
-
-/* ── KEYFRAMES ── */
-@keyframes bellRing {
-  0%  { transform: rotate(0deg);   }
-  15% { transform: rotate(13deg);  }
-  30% { transform: rotate(-11deg); }
-  45% { transform: rotate(8deg);   }
-  60% { transform: rotate(-5deg);  }
-  75% { transform: rotate(3deg);   }
-  100%{ transform: rotate(0deg);   }
-}
-
-@keyframes bellActive {
-  0%  { transform: rotate(0deg) scale(1);     }
-  20% { transform: rotate(-16deg) scale(1.12); }
-  40% { transform: rotate(13deg) scale(1.12); }
-  60% { transform: rotate(-8deg) scale(1.05); }
-  80% { transform: rotate(5deg) scale(1.02);  }
-  100%{ transform: rotate(0deg) scale(1);     }
-}
-
-
-@keyframes dotPulse {
-  0%, 100% { opacity: 1;   box-shadow: 0 0 6px rgba(245,158,11,0.9), 0 0 12px rgba(245,158,11,0.4); }
-  50%       { opacity: 0.7; box-shadow: 0 0 10px rgba(245,158,11,1),  0 0 20px rgba(245,158,11,0.6); }
-}
-
-/* ══════════════════════════════════════ */
-
-.edit-btn-right {
-  width: 30px; height: 30px; border-radius: 8px;
-  background: #F1F5FF; border: 1.5px solid #D1DEFF;
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  color: #7A8FB5; transition: all 0.2s; flex-shrink: 0;
-}
+.reminder-btn::before { content: ''; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(135deg, rgba(255,255,255,0.65) 0%, transparent 55%); pointer-events: none; transition: opacity 0.3s ease; }
+.reminder-btn::after { content: ''; position: absolute; inset: -4px; border-radius: 14px; border: 2px solid transparent; transition: all 0.35s ease; pointer-events: none; }
+.reminder-btn:not(.active):hover { transform: translateY(-2px) scale(1.07); background: linear-gradient(135deg, #E4EEFF 0%, #D8E7FF 100%); border-color: #93B4FF; color: #2563EB; box-shadow: 0 4px 14px rgba(37,99,235,0.2), 0 1px 4px rgba(37,99,235,0.1); }
+.reminder-btn:not(.active):hover::after { border-color: rgba(37,99,235,0.22); }
+.reminder-btn:not(.active):hover .bell-icon { animation: bellRing 0.5s cubic-bezier(0.36,0.07,0.19,0.97) both; }
+.reminder-btn.active { background: linear-gradient(135deg, #1D4ED8 0%, #2563EB 55%, #3B82F6 100%); border-color: #1A4ACC; color: #ffffff; box-shadow: 0 4px 18px rgba(37,99,235,0.5), 0 2px 6px rgba(37,99,235,0.3), inset 0 1px 0 rgba(255,255,255,0.22); }
+.reminder-btn.active::before { background: linear-gradient(135deg, rgba(255,255,255,0.28) 0%, transparent 50%); }
+.reminder-btn.active::after { border-color: rgba(37,99,235,0.4); inset: -5px; animation: pulseRing 2s ease-out infinite; }
+.reminder-btn.active:hover { transform: translateY(-2px) scale(1.07); }
+.reminder-btn.active .bell-icon { animation: bellActive 0.65s cubic-bezier(0.36,0.07,0.19,0.97) both; }
+.reminder-btn:active { transform: scale(0.92) translateY(0) !important; transition: transform 0.1s ease !important; }
+.bell-icon { display: flex; align-items: center; justify-content: center; transform-origin: top center; position: relative; z-index: 1; }
+.bell-dot { display: none; position: absolute; top: 4px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #FDE68A, #F59E0B); border: 1.5px solid rgba(255,255,255,0.7); box-shadow: 0 0 6px rgba(245,158,11,0.9), 0 0 12px rgba(245,158,11,0.4); z-index: 3; pointer-events: none; }
+.reminder-btn.active .bell-dot { display: block; }
+@keyframes bellRing { 0%{transform:rotate(0)} 15%{transform:rotate(13deg)} 30%{transform:rotate(-11deg)} 45%{transform:rotate(8deg)} 60%{transform:rotate(-5deg)} 75%{transform:rotate(3deg)} 100%{transform:rotate(0)} }
+@keyframes bellActive { 0%{transform:rotate(0) scale(1)} 20%{transform:rotate(-16deg) scale(1.12)} 40%{transform:rotate(13deg) scale(1.12)} 60%{transform:rotate(-8deg) scale(1.05)} 80%{transform:rotate(5deg) scale(1.02)} 100%{transform:rotate(0) scale(1)} }
+.edit-btn-right { width: 30px; height: 30px; border-radius: 8px; background: #F1F5FF; border: 1.5px solid #D1DEFF; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #7A8FB5; transition: all 0.2s; flex-shrink: 0; }
 .edit-btn-right:hover { border-color: #93C5FD; background: #EEF5FF; color: #2563EB; }
-
 .adherence-block { display: flex; flex-direction: column; gap: 8px; }
 .adherence-title { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #7A8FB5; }
 .adherence-dots  { display: flex; gap: 5px; }
 .adh-dot-wrap    { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.adh-dot {
-  width: 22px; height: 22px; border-radius: 8px; transition: all 0.2s;
-}
+.adh-dot { width: 22px; height: 22px; border-radius: 8px; transition: all 0.2s; }
 .adh-dot.today-dot { background: #EFF6FF; border: 2px dashed #129e43; }
 .adh-dot.missed    { background: #F0F2F8; border: 1.5px solid #22C55E; }
 .adh-dot-wrap.today .adh-day { color: #22C55E; font-weight: 800; }
 .adh-day { font-size: 9px; color: #9096B0; font-weight: 600; text-transform: uppercase; }
 .right-divider { height: 1px; background: linear-gradient(90deg, transparent, #C8D8F8, transparent); }
-
-.med-visual-card {
-  flex: 1; border-radius: 16px;
-  background: linear-gradient(145deg, #EFF6FF 0%, #fff 60%);
-  border: 1.5px solid #BFDBFE;
-  padding: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
-  position: relative; overflow: hidden; transition: all 0.25s;
-}
+.med-visual-card { flex: 1; border-radius: 16px; background: linear-gradient(145deg, #EFF6FF 0%, #fff 60%); border: 1.5px solid #BFDBFE; padding: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; position: relative; overflow: hidden; transition: all 0.25s; }
 .med-card:hover .med-visual-card { box-shadow: 0 4px 16px rgba(26,58,107,0.12); }
 .med-visual-blob  { position: absolute; border-radius: 50%; opacity: 0.14; pointer-events: none; }
 .blob1 { width: 70px; height: 70px; top: -20px; right: -20px; }
 .blob2 { width: 50px; height: 50px; bottom: -15px; left: -15px; }
-.med-visual-icon  {
-  font-size: 32px; filter: drop-shadow(0 4px 8px rgba(26,58,107,0.14));
-  margin-bottom: 2px; transition: transform 0.3s cubic-bezier(0.22,1,0.36,1);
-}
+.med-visual-icon  { font-size: 32px; filter: drop-shadow(0 4px 8px rgba(26,58,107,0.14)); margin-bottom: 2px; transition: transform 0.3s cubic-bezier(0.22,1,0.36,1); }
 .med-visual-dose  { font-size: 15px; font-weight: 800; letter-spacing: -0.5px; }
 .med-visual-name  { font-size: 11px; color: #7A8FB5; font-weight: 600; }
 .med-visual-bar-wrap  { width: 100%; margin-top: 6px; display: flex; flex-direction: column; gap: 4px; }
@@ -362,18 +242,6 @@
 .med-visual-bar-label { font-size: 10px; font-weight: 700; text-align: center; }
 
 /* ── RESPONSIVE ── */
-@media (min-width: 1280px) {
-  .med-card  { grid-template-columns: 200px 1fr 260px; }
-  .med-time  { font-size: 38px; }
-}
-@media (max-width: 900px) {
-  .med-card  { grid-template-columns: 160px 1fr; }
-  .med-right { display: none; }
-}
-@media (max-width: 600px) {
-  .med-card   { grid-template-columns: 1fr; }
-  .med-left   { border-right: none; border-bottom: 1.5px solid #D8E8FF; padding: 16px 16px 16px 20px; }
-  .med-center { padding: 16px; }
-  .med-right  { display: none; }
-  .med-time   { font-size: 26px; }
-}
+@media (min-width: 1280px) { .med-card { grid-template-columns: 200px 1fr 260px; } .med-time { font-size: 38px; } }
+@media (max-width: 900px)  { .med-card { grid-template-columns: 160px 1fr; } .med-right { display: none; } }
+@media (max-width: 600px)  { .med-card { grid-template-columns: 1fr; } .med-left { border-right: none; border-bottom: 1.5px solid #D8E8FF; padding: 16px 16px 16px 20px; } .med-center { padding: 16px; } .med-right { display: none; } .med-time { font-size: 26px; } }

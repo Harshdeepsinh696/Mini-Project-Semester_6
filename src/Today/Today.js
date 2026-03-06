@@ -1,39 +1,35 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Layout from "../Layout/Layout";
 import MedCard from "../Component/MedCard";
 import FilterTabs from "../Component/FilterTabs";
+import { useMedicines } from "../Context/MedicineContext";
 import "./Today.css";
-
-const medicines = [
-  { id: 1, name: "Aspirin", dose: "500mg", qty: "1 or 1/2 tablet", icon: "💊", color: "#2563EB", colorGradStart: "#1A3A6B", colorGradEnd: "#2563EB", time: "12:00", ampm: "PM", note: "Take after food", frequency: "Once in Day", countdown: "In about 2 hours", status: "pending", refillLeft: 14, refillTotal: 30, category: "Pain Relief", sideEffect: "Take with water" },
-  { id: 2, name: "Vitamin D", dose: "1000 IU", qty: "1 capsule", icon: "🌿", color: "#16A34A", colorGradStart: "#064E3B", colorGradEnd: "#22C55E", time: "08:00", ampm: "AM", note: "Take with breakfast", frequency: "Once in Day", countdown: "Taken 2 hours ago", status: "taken", refillLeft: 22, refillTotal: 30, category: "Supplement", sideEffect: "Best with food" },
-  { id: 3, name: "Metformin", dose: "850mg", qty: "1 tablet", icon: "🔵", color: "#1d55cc", colorGradStart: "#1A3A6B", colorGradEnd: "#3B82F6", time: "08:00", ampm: "PM", note: "Take before dinner", frequency: "Twice in Day", countdown: "In about 6 hours", status: "pending", refillLeft: 5, refillTotal: 30, category: "Diabetes", sideEffect: "Avoid alcohol" },
-];
 
 const TODAY_TABS = ["All", "Pending", "Taken", "Skipped"];
 
 export default function Today() {
+  const navigate = useNavigate();
+  const { medicines, updateMedicine } = useMedicines();   // ← global shared medicines
+
   const [activeFilter, setActiveFilter] = useState("All");
-  const [meds, setMeds] = useState(medicines);
 
   const handleTake = id =>
-    setMeds(prev => prev.map(m => m.id === id ? { ...m, status: "taken", countdown: "Just taken" } : m));
+    updateMedicine(id, { status: "taken", countdown: "Just taken" });
 
   const handleSkip = (id, undo = false) =>
-    setMeds(prev => prev.map(m =>
-      m.id === id
-        ? undo
-          ? { ...m, status: "pending", countdown: "Pending" }
-          : { ...m, status: "skipped", countdown: "Skipped" }
-        : m
-    ));
+    updateMedicine(id, undo
+      ? { status: "pending", countdown: "Pending" }
+      : { status: "skipped", countdown: "Skipped" }
+    );
 
-  const takenCount   = meds.filter(m => m.status === "taken").length;
-  const skippedCount = meds.filter(m => m.status === "skipped").length;
-  const pendingCount = meds.filter(m => m.status === "pending").length;
-  const progress     = Math.round((takenCount / meds.length) * 100);
+  const takenCount   = medicines.filter(m => m.status === "taken").length;
+  const skippedCount = medicines.filter(m => m.status === "skipped").length;
+  const pendingCount = medicines.filter(m => m.status === "pending").length;
+  const progress     = medicines.length > 0
+    ? Math.round((takenCount / medicines.length) * 100) : 0;
 
-  const filteredMeds = meds.filter(m => {
+  const filteredMeds = medicines.filter(m => {
     if (activeFilter === "Pending") return m.status === "pending";
     if (activeFilter === "Taken")   return m.status === "taken";
     if (activeFilter === "Skipped") return m.status === "skipped";
@@ -46,7 +42,7 @@ export default function Today() {
         <div className="main-header">
           <div className="greeting">
             <h1>Good Morning 👋</h1>
-            <p>{meds.length} medicines scheduled for today</p>
+            <p>{medicines.length} medicines scheduled for today</p>
           </div>
           <div className="date-chip">📅 <b>Thursday</b>, Feb 27</div>
         </div>
@@ -56,7 +52,7 @@ export default function Today() {
             <div className="stat-icon-box total">💊</div>
             <div className="stat-text">
               <div className="stat-label total">Total Medicine</div>
-              <div className="stat-value">{meds.length}</div>
+              <div className="stat-value">{medicines.length}</div>
             </div>
           </div>
           <div className="stat-card taken-card">
@@ -73,7 +69,7 @@ export default function Today() {
               <div className="stat-value">{pendingCount}</div>
             </div>
           </div>
-          <button className="add-btn">
+          <button className="add-btn" onClick={() => navigate("/addMedicine")}>
             <div className="add-btn-label">Add<br />Medicine</div>
             <div className="add-btn-circle">+</div>
           </button>
@@ -84,7 +80,7 @@ export default function Today() {
             <span>Today's progress</span>
             <div className="progress-right">
               <strong>{progress}%</strong>
-              <span className="done-pill">{takenCount} of {meds.length} done</span>
+              <span className="done-pill">{takenCount} of {medicines.length} done</span>
               {skippedCount > 0 && <span className="skipped-pill">{skippedCount} skipped</span>}
             </div>
           </div>

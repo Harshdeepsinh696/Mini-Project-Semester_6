@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Layout from "../Layout/Layout";
 import MedCard from "../Component/MedCard";
 import FilterTabs from "../Component/FilterTabs";
@@ -44,13 +45,13 @@ function CalendarStrip({ selectedDay, onSelect }) {
 }
 
 export default function Upcoming() {
+  const navigate = useNavigate();                          // ← ADDED
   const [activeFilter, setActiveFilter] = useState("All");
   const [selectedDay, setSelectedDay]   = useState(null);
   const [meds, setMeds]                 = useState(
     upcomingSchedule.map(m => ({ ...m, status: "pending" }))
   );
 
-  // MedCard expects onTake and onSkip — for upcoming we keep them as no-ops or update status
   const handleTake = id =>
     setMeds(prev => prev.map(m => m.id === id ? { ...m, status: "taken", countdown: "Just taken" } : m));
 
@@ -117,7 +118,12 @@ export default function Upcoming() {
               <div className="stat-value">{remindersOn}</div>
             </div>
           </div>
-          <button className="add-btn">
+
+          {/* ── Add Medicine button → navigates to /addMedicine ── */}
+          <button
+            className="add-btn"
+            onClick={() => navigate("/addMedicine")}    // ← ADDED
+          >
             <div className="add-btn-label">Add<br />Medicine</div>
             <div className="add-btn-circle">+</div>
           </button>

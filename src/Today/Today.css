@@ -133,7 +133,7 @@ html, body { height: 100%; overflow: hidden; }
 }
 .add-btn:hover  { background: linear-gradient(135deg,#162f58,#1d55cc); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37,99,235,0.38); }
 .add-btn:active { transform: scale(0.97); }
-.add-btn-label  { font-size: 12px; font-weight: 700; color: #fff; line-height: 1.35; }
+.add-btn-label  { font-size: 12px; font-weight: 700; color: #fff; line-height: 1.35; margin-left: 70px; }
 .add-btn-circle {
   width: 28px; height: 28px; border-radius: 50%;
   background: rgba(255,255,255,0.2);

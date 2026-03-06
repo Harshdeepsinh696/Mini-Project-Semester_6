@@ -30,18 +30,32 @@ function ClockIcon({ size = 12, color = "currentColor" }) {
 
 function BellIcon() {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      width="14"
-      height="14"
-    >
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+      strokeLinecap="round" strokeLinejoin="round" width="14" height="14">
       <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
       <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+    </svg>
+  );
+}
+
+function DoctorIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+      strokeLinecap="round" strokeLinejoin="round" width="11" height="11">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </svg>
+  );
+}
+
+function NoteIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+      strokeLinecap="round" strokeLinejoin="round" width="11" height="11">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+      <polyline points="14 2 14 8 20 8" />
+      <line x1="9" y1="13" x2="15" y2="13" />
+      <line x1="9" y1="17" x2="12" y2="17" />
     </svg>
   );
 }
@@ -49,18 +63,18 @@ function BellIcon() {
 export default function MedCard({ med, onTake, onSkip, onToggleReminder }) {
   const [reminderSet, setReminderSet] = useState(med.reminderSet ?? false);
 
-  const isTaken = med.status === "taken";
+  const isTaken   = med.status === "taken";
   const isSkipped = med.status === "skipped";
-  const isDone = isTaken || isSkipped;
+  const isDone    = isTaken || isSkipped;
   const refillPct = Math.round((med.refillLeft / med.refillTotal) * 100);
-  const isLow = med.refillLeft <= 7;
+  const isLow     = med.refillLeft <= 7;
 
   return (
     <div
       className={`med-card ${isTaken ? "done" : ""} ${isSkipped ? "skipped" : ""}`}
       style={{ "--med-grad-start": FIXED_GRAD_START, "--med-grad-end": FIXED_GRAD_END }}
     >
-      {/* LEFT */}
+      {/* ── LEFT ── */}
       <div className="med-left">
         <div className="med-icon-wrap">
           <div className={`med-icon-box ${isTaken ? "done" : ""} ${isSkipped ? "skipped" : ""}`}>
@@ -70,22 +84,15 @@ export default function MedCard({ med, onTake, onSkip, onToggleReminder }) {
         <div className="med-identity">
           <div className="med-name">{med.name}</div>
           <span className="med-category-badge"
-            style={{
-              background: `${med.color}15`,
-              color: med.color,
-              borderColor: `${med.color}40`
-            }}>
+            style={{ background:`${med.color}15`, color:med.color, borderColor:`${med.color}40` }}>
             {med.category}
           </span>
           <div className="med-sub">{med.dose} · {med.qty}</div>
         </div>
         <div className="med-refill">
           <RefillRing
-            left={med.refillLeft}
-            total={med.refillTotal}
-            color={FIXED_COLOR}
-            colorGradStart={FIXED_GRAD_START}
-            colorGradEnd={FIXED_GRAD_END}
+            left={med.refillLeft} total={med.refillTotal}
+            color={FIXED_COLOR} colorGradStart={FIXED_GRAD_START} colorGradEnd={FIXED_GRAD_END}
           />
           <div className="refill-info">
             <span className="refill-title" style={{ color: isLow ? "#EF4444" : "#1A3A6B" }}>
@@ -99,8 +106,7 @@ export default function MedCard({ med, onTake, onSkip, onToggleReminder }) {
             <button className="action-btn skip" onClick={e => { e.stopPropagation(); onSkip(med.id); }}>
               <svg viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="2.5"
                 strokeLinecap="round" width="13" height="13">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
+                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
               </svg>
               <span>Skip</span>
             </button>
@@ -126,29 +132,27 @@ export default function MedCard({ med, onTake, onSkip, onToggleReminder }) {
         )}
       </div>
 
-      {/* CENTER */}
+      {/* ── CENTER ── */}
       <div className="med-center">
         <div className="med-time-row">
           <span className="med-time"
-            style={!isDone ? { backgroundImage: `linear-gradient(135deg,${FIXED_GRAD_START} 0%,${FIXED_GRAD_END} 100%)` } : {}}>
+            style={!isDone ? { backgroundImage:`linear-gradient(135deg,${FIXED_GRAD_START} 0%,${FIXED_GRAD_END} 100%)` } : {}}>
             {med.time}
           </span>
           <span className="med-ampm">{med.ampm}</span>
         </div>
+
         <div className="med-note">
           <span className="note-bar"
-            style={{ background: `linear-gradient(180deg,${FIXED_GRAD_START},${FIXED_GRAD_END})` }} />
+            style={{ background:`linear-gradient(180deg,${FIXED_GRAD_START},${FIXED_GRAD_END})` }} />
           {med.note}
         </div>
+
         <div className="tags-row">
           <span className="tag freq">{med.frequency}</span>
-          {isTaken && <span className="tag taken-tag">✓ Taken</span>}
+          {isTaken   && <span className="tag taken-tag">✓ Taken</span>}
           {isSkipped && <span className="tag skipped-tag">✕ Skipped</span>}
-          {!isDone && (
-            <span className="tag pend-tag">
-              <span className="pend-dot" />Pending
-            </span>
-          )}
+          {!isDone   && <span className="tag pend-tag"><span className="pend-dot" />Pending</span>}
           {med.sideEffect && (
             <span className="tag info-tag">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
@@ -161,20 +165,87 @@ export default function MedCard({ med, onTake, onSkip, onToggleReminder }) {
             </span>
           )}
         </div>
+
         <div className="med-countdown">
           <ClockIcon size={12} color={isDone ? "#A0A6C0" : med.color} />
           <span style={{ color: isDone ? "#A0A6C0" : med.color }}>{med.countdown}</span>
         </div>
+
+        {/* ── Doctor & Instructions section (shown only if data exists) ── */}
+        {(med.doctor || med.meal || med.priority) && (
+          <div className="med-extra-info">
+
+            {/* Doctor row */}
+            {med.doctor && (
+              <div className="med-extra-row">
+                <span className="med-extra-icon" style={{ background:"#EFF6FF", color:"#2563EB" }}>
+                  <DoctorIcon />
+                </span>
+                <div className="med-extra-content">
+                  <span className="med-extra-label">Prescribed by</span>
+                  <span className="med-extra-value">Dr. {med.doctor.replace(/^dr\.?\s*/i,"")}</span>
+                </div>
+              </div>
+            )}
+
+            {/* Meal timing row */}
+            {med.meal && (
+              <div className="med-extra-row">
+                <span className="med-extra-icon" style={{ background:"#FFFBEB", color:"#B45309" }}>
+                  🍽️
+                </span>
+                <div className="med-extra-content">
+                  <span className="med-extra-label">Meal timing</span>
+                  <span className="med-extra-value">{med.meal}</span>
+                </div>
+              </div>
+            )}
+
+            {/* Priority row */}
+            {med.priority && (
+              <div className="med-extra-row">
+                <span className="med-extra-icon"
+                  style={{
+                    background: med.priority==="Critical"?"#FEE2E2":med.priority==="High"?"#FEF3C7":"#EFF6FF",
+                    color:      med.priority==="Critical"?"#DC2626":med.priority==="High"?"#B45309":"#2563EB",
+                  }}>
+                  {med.priority==="Critical"?"🔴":med.priority==="High"?"🟠":med.priority==="Medium"?"🟡":"🟢"}
+                </span>
+                <div className="med-extra-content">
+                  <span className="med-extra-label">Priority</span>
+                  <span className="med-extra-value"
+                    style={{
+                      color: med.priority==="Critical"?"#DC2626":med.priority==="High"?"#B45309":"#1A3A6B"
+                    }}>
+                    {med.priority}
+                  </span>
+                </div>
+              </div>
+            )}
+
+          </div>
+        )}
+
+        {/* Special instructions box — shown only if notes exist beyond the short note */}
+        {med.note && med.note.length > 20 && (
+          <div className="med-instructions">
+            <div className="med-instructions-header">
+              <NoteIcon />
+              <span>Special Instructions</span>
+            </div>
+            <div className="med-instructions-text">{med.note}</div>
+          </div>
+        )}
+
       </div>
 
-      {/* RIGHT */}
+      {/* ── RIGHT ── */}
       <div className="med-right">
         <div className="right-top-row">
-          {isTaken && <div className="done-badge">✓ TAKEN</div>}
+          {isTaken   && <div className="done-badge">✓ TAKEN</div>}
           {isSkipped && <div className="skipped-badge">✕ SKIPPED</div>}
-          {!isDone && <div style={{ flex: 1 }} />}
+          {!isDone   && <div style={{ flex: 1 }} />}
 
-          {/* Reminder Button */}
           <button
             className={`reminder-btn ${reminderSet ? "active" : ""}`}
             title={reminderSet ? "Reminder on" : "Set reminder"}
@@ -185,25 +256,23 @@ export default function MedCard({ med, onTake, onSkip, onToggleReminder }) {
             }}
           >
             <span className="bell-dot" />
-            <span className="bell-icon">
-              <BellIcon />
-            </span>
+            <span className="bell-icon"><BellIcon /></span>
           </button>
-
           <button className="edit-btn-right"><EditIcon /></button>
         </div>
+
         <div className="adherence-block">
           <div className="adherence-title">Weekly Adherence</div>
           <div className="adherence-dots">
-            {["M", "T", "W", "T", "F", "S", "S"].map((day, i) => {
+            {["M","T","W","T","F","S","S"].map((day, i) => {
               const taken = i < 4, today = i === 4;
               return (
                 <div key={i} className={`adh-dot-wrap ${today ? "today" : ""}`}>
                   <div
                     className={`adh-dot ${taken ? "taken" : today ? "today-dot" : "missed"}`}
                     style={taken ? {
-                      background: `linear-gradient(135deg,${FIXED_COLOR_GREEN_START},${FIXED_COLOR_GREEN_END})`,
-                      boxShadow: `0 2px 6px ${med.color}55`
+                      background:`linear-gradient(135deg,${FIXED_COLOR_GREEN_START},${FIXED_COLOR_GREEN_END})`,
+                      boxShadow:`0 2px 6px ${med.color}55`
                     } : {}}
                   />
                   <span className="adh-day">{day}</span>
@@ -212,9 +281,11 @@ export default function MedCard({ med, onTake, onSkip, onToggleReminder }) {
             })}
           </div>
         </div>
+
         <div className="right-divider" />
+
         <div className="med-visual-card"
-          style={{ background: "linear-gradient(145deg,#EFF6FF 0%,#fff 60%)", borderColor: "#BFDBFE" }}>
+          style={{ background:"linear-gradient(145deg,#EFF6FF 0%,#fff 60%)", borderColor:"#BFDBFE" }}>
           <div className="med-visual-blob blob1" style={{ background: FIXED_GRAD_START }} />
           <div className="med-visual-blob blob2" style={{ background: FIXED_GRAD_END }} />
           <div className="med-visual-icon">{med.icon}</div>
@@ -222,24 +293,20 @@ export default function MedCard({ med, onTake, onSkip, onToggleReminder }) {
             <div className="med-visual-name">{med.name}</div>
             <div className="med-visual-bar-wrap">
               <div className="med-visual-bar-track">
-                <div
-                  className="med-visual-bar-fill"
+                <div className="med-visual-bar-fill"
                   style={{
-                    width: `${refillPct}%`,
-                    background: isLow
-                      ? "#EF4444"
-                      : `linear-gradient(90deg,${FIXED_GRAD_START},${FIXED_GRAD_END})`
-                  }}
-                />
+                    width:`${refillPct}%`,
+                    background: isLow ? "#EF4444" : `linear-gradient(90deg,${FIXED_GRAD_START},${FIXED_GRAD_END})`
+                  }} />
               </div>
-              <span className="med-visual-bar-label"
-                style={{ color: isLow ? "#EF4444" : FIXED_COLOR }}>
+              <span className="med-visual-bar-label" style={{ color: isLow ? "#EF4444" : FIXED_COLOR }}>
                 {med.refillLeft}/{med.refillTotal} pills
               </span>
             </div>
           </div>
         </div>
       </div>
+
     </div>
   );
 }
