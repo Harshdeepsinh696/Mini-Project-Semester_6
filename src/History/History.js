@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Layout from "../Layout/Layout";
 import MedCard from "../Component/MedCard";
 import FilterTabs from "../Component/FilterTabs";
@@ -110,7 +111,6 @@ const JUMP_DAYS = [
   { abbr: "FRI", num: 21, today: false },
 ];
 
-/* ─── Helpers ──────────────────────────────────────────────────────────────── */
 function groupByDate(items) {
   const map = {};
   items.forEach(item => {
@@ -132,9 +132,6 @@ function dateIcon(label) {
   return "📄";
 }
 
-/* ─── Sub-components ───────────────────────────────────────────────────────── */
-
-/* Weekly heatmap */
 function WeeklyHeatmap({ meds }) {
   const WEEK = [
     { label: "Mon 24", d: 24 },
@@ -182,7 +179,6 @@ function WeeklyHeatmap({ meds }) {
   );
 }
 
-/* Adherence bar */
 function AdherenceBar({ meds }) {
   const taken   = meds.filter(m => m.status === "taken").length;
   const skipped = meds.filter(m => m.status === "skipped").length;
@@ -205,7 +201,6 @@ function AdherenceBar({ meds }) {
   );
 }
 
-/* Jump-to-day strip (vertical pills in left column) */
 function JumpToDay({ selectedDay, onSelect }) {
   return (
     <div className="hist-panel">
@@ -235,7 +230,6 @@ function JumpToDay({ selectedDay, onSelect }) {
   );
 }
 
-/* ─── Main ──────────────────────────────────────────────────────────────────── */
 export default function History() {
   const [activeFilter, setActiveFilter] = useState("All");
   const [selectedDay, setSelectedDay]   = useState(null);
@@ -255,13 +249,11 @@ export default function History() {
         : m
     ));
 
-  /* Stats */
   const takenCount   = meds.filter(m => m.status === "taken").length;
   const skippedCount = meds.filter(m => m.status === "skipped").length;
   const totalCount   = meds.length;
   const adherencePct = Math.round((takenCount / totalCount) * 100);
 
-  /* Filter */
   const filtered = meds.filter(m => {
     if (selectedDay && m.histDayNum !== selectedDay) return false;
     if (activeFilter === "Taken")   return m.status === "taken";
@@ -275,7 +267,6 @@ export default function History() {
     <Layout>
       <div className="hist-main">
 
-        {/* ── Top header ── */}
         <div className="hist-header">
           <div className="hist-greeting">
             <h1>Medicine History 📋</h1>
@@ -284,7 +275,6 @@ export default function History() {
           <div className="hist-date-chip">📅 <b>Thursday</b>, Feb 27</div>
         </div>
 
-        {/* ── Stat cards ── */}
         <div className="hist-stats-row">
           <div className="hist-stat-card sc-blue">
             <div className="hist-stat-icon">📋</div>
@@ -314,26 +304,22 @@ export default function History() {
               <div className="hist-stat-value">{adherencePct}%</div>
             </div>
           </div>
-          <button className="hist-add-btn">
+          <button className="hist-add-btn" onClick={() => window.history.back()}>
             <div className="hist-add-label">Add<br />Medicine</div>
             <div className="hist-add-circle">+</div>
           </button>
         </div>
 
-        {/* ══ Two-column body ══ */}
         <div className="hist-body">
 
-          {/* ── LEFT: controls ── */}
           <div className="hist-left-col">
             <WeeklyHeatmap meds={meds} />
             <AdherenceBar  meds={meds} />
             <JumpToDay selectedDay={selectedDay} onSelect={setSelectedDay} />
           </div>
 
-          {/* ── RIGHT: cards ── */}
           <div className="hist-right-col">
 
-            {/* List header */}
             <div className="hist-list-head">
               <div className="hist-list-title">History</div>
               <FilterTabs
@@ -343,7 +329,6 @@ export default function History() {
               />
             </div>
 
-            {/* Scrollable card list */}
             <div className="hist-cards">
               {Object.keys(grouped).length === 0 ? (
                 <div className="hist-empty">No medicine records for this filter</div>
@@ -382,7 +367,6 @@ export default function History() {
           </div>
 
         </div>
-        {/* ══ end body ══ */}
 
       </div>
     </Layout>
