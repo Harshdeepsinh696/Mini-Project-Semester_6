@@ -45,7 +45,7 @@ function CalendarStrip({ selectedDay, onSelect }) {
 }
 
 export default function Upcoming() {
-  const navigate = useNavigate();
+  const navigate = useNavigate();                          // ← ADDED
   const [activeFilter, setActiveFilter] = useState("All");
   const [selectedDay, setSelectedDay]   = useState(null);
   const [meds, setMeds]                 = useState(
@@ -119,9 +119,10 @@ export default function Upcoming() {
             </div>
           </div>
 
+          {/* ── Add Medicine button → navigates to /addMedicine ── */}
           <button
             className="add-btn"
-            onClick={() => navigate("/addMedicine")}
+            onClick={() => navigate("/addMedicine")}    // ← ADDED
           >
             <div className="add-btn-label">Add<br />Medicine</div>
             <div className="add-btn-circle">+</div>

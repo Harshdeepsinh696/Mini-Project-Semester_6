@@ -1,13 +1,33 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* ═══════════════════════════════════════════════════════
+   index.css  —  Global base styles
+   Place at: src/index.css
+   IMPORTANT: Do NOT put overflow:hidden or height:100vh
+   on html/body — it blocks page scrolling!
+═══════════════════════════════════════════════════════ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* ✅ NO overflow-y:hidden here */
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  /* ✅ NO overflow-y:hidden here */
+  /* ✅ NO height:100vh here */
+}
+
+/* Only the root wrapper — let it grow naturally */
+#root {
+  min-height: 100vh;
+  /* ✅ NO overflow:hidden here */
 }
