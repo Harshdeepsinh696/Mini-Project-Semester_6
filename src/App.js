@@ -1,6 +1,5 @@
 // ══════════════════════════════════════════════════════════
 //  App.js  |  src/App.js
-//  Login & Signup render as modals over the LandingPage
 // ══════════════════════════════════════════════════════════
 import { useEffect } from "react";
 import {
@@ -10,13 +9,14 @@ import {
 import "./App.css";
 import { MedicineProvider } from "./Context/MedicineContext";
 
-import LandingPage from "./LandingPage/LandingPage";
+import LandingPage  from "./LandingPage/LandingPage";
 import Today        from "./Today/Today";
 import Upcoming     from "./Upcoming/Upcoming";
 import History      from "./History/History";
 import AddMedicine  from "./Addmedicine/Addmedicine";
 import Login        from "./Login-Create/Login";
 import Signup       from "./Login-Create/Signup";
+import ProfilePage  from "./Profile/ProfilePage";
 
 /** Resets scroll on every route change */
 function ScrollToTop() {
@@ -27,35 +27,22 @@ function ScrollToTop() {
   return null;
 }
 
-/**
- * LandingPage with Login modal overlay.
- * The modal renders on top; clicking the backdrop or × closes it.
- */
 function LandingWithLogin() {
   const navigate = useNavigate();
   return (
     <>
       <LandingPage />
-      <Login
-        onClose={() => navigate("/")}
-        onSwitchToSignup={() => navigate("/signup")}
-      />
+      <Login onClose={() => navigate("/")} onSwitchToSignup={() => navigate("/signup")} />
     </>
   );
 }
 
-/**
- * LandingPage with Signup modal overlay.
- */
 function LandingWithSignup() {
   const navigate = useNavigate();
   return (
     <>
       <LandingPage />
-      <Signup
-        onClose={() => navigate("/")}
-        onSwitchToLogin={() => navigate("/login")}
-      />
+      <Signup onClose={() => navigate("/")} onSwitchToLogin={() => navigate("/login")} />
     </>
   );
 }
@@ -74,6 +61,7 @@ export default function App() {
           <Route path="/history"     element={<History />} />
           <Route path="/addMedicine" element={<AddMedicine />} />
           <Route path="/settings"    element={<Today />} />
+          <Route path="/profile"     element={<ProfilePage />} />
           <Route path="*"            element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>

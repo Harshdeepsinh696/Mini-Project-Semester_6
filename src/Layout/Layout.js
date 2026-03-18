@@ -1,5 +1,10 @@
+// ══════════════════════════════════════════════════════════
+//  Layout.jsx  |  src/Layout/Layout.jsx
+//  Updated: avatar replaced with ProfileDropdown
+// ══════════════════════════════════════════════════════════
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import ProfileDropdown from "../Profile/ProfileDropdown";
 import "./Layout.css";
 
 /* ── Route map ── */
@@ -89,11 +94,9 @@ function SidebarContent({ onClose }) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // ✅ FIX: return null (not "Today") when path doesn't match any nav route
-  // This prevents "Today" from appearing active on /addMedicine or other pages
   const activeLabel = Object.entries(NAV_ROUTES).find(
     ([, path]) => location.pathname === path
-  )?.[0] ?? null;                                         // ← CHANGED: was ?? "Today"
+  )?.[0] ?? null;
 
   const go = (label) => {
     navigate(NAV_ROUTES[label] ?? "/today");
@@ -105,7 +108,7 @@ function SidebarContent({ onClose }) {
 
   return (
     <>
-      {/* Brand */}
+      {/* Brand + Profile dropdown */}
       <div className="sidebar-top">
         <div className="brand">
           <div className="brand-icon">
@@ -117,14 +120,9 @@ function SidebarContent({ onClose }) {
           </div>
           <span className="brand-name">Medi<span>Care</span></span>
         </div>
-        <div className="avatar">
-          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" strokeWidth="2"
-            strokeLinecap="round" strokeLinejoin="round" width="17" height="17">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-            <circle cx="12" cy="7" r="4" />
-          </svg>
-          <div className="avatar-dot" />
-        </div>
+
+        {/* ← ProfileDropdown replaces the old plain avatar button */}
+        <ProfileDropdown />
       </div>
 
       {/* Main nav */}
@@ -169,14 +167,13 @@ function SidebarContent({ onClose }) {
   );
 }
 
-/* ══════════════════════════════════════
+/* ══════════════════════════════════════════════════════════
    LAYOUT  —  exported, wraps every page
-══════════════════════════════════════ */
+   ══════════════════════════════════════════════════════════ */
 export default function Layout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
-  // Mobile topbar label — show "Add Medicine" on that page, else nav label
   const pageLabel = Object.entries(NAV_ROUTES).find(
     ([, path]) => location.pathname === path
   )?.[0] ?? "MediCare";

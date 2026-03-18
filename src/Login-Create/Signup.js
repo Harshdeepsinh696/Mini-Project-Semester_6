@@ -1,6 +1,5 @@
 // ══════════════════════════════════════════════════════════
 //  Signup.jsx  |  src/Login-Create/Signup.jsx
-//  Renders as a modal overlay over whatever is behind it
 // ══════════════════════════════════════════════════════════
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -8,16 +7,19 @@ import "./Auth.css";
 
 export default function Signup({ onClose, onSwitchToLogin }) {
   const navigate = useNavigate();
-  const [form, setForm]        = useState({ name: "", email: "", password: "", confirm: "" });
+  const [form, setForm] = useState({
+    name: "", email: "", phone: "", dob: "",
+    gender: "", password: "", confirm: "",
+  });
   const [showPass, setShowPass] = useState(false);
-  const [loading, setLoading]  = useState(false);
-  const [error, setError]      = useState("");
-  const [agreed, setAgreed]    = useState(false);
+  const [loading, setLoading]   = useState(false);
+  const [error, setError]       = useState("");
+  const [agreed, setAgreed]     = useState(false);
 
   /* Lock body scroll while modal is open */
   useEffect(() => {
-    document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = ""; };
+    document.documentElement.classList.add("modal-open");
+    return () => document.documentElement.classList.remove("modal-open");
   }, []);
 
   /* Close on Escape */
@@ -46,8 +48,12 @@ export default function Signup({ onClose, onSwitchToLogin }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    if (!form.name || !form.email || !form.password || !form.confirm) {
+    if (!form.name || !form.email || !form.phone || !form.dob || !form.gender || !form.password || !form.confirm) {
       setError("Please fill in all fields.");
+      return;
+    }
+    if (!/^\+?[\d\s\-]{7,15}$/.test(form.phone)) {
+      setError("Please enter a valid phone number.");
       return;
     }
     if (form.password !== form.confirm) {
@@ -69,17 +75,13 @@ export default function Signup({ onClose, onSwitchToLogin }) {
   };
 
   return (
-    /* Backdrop */
     <div className="auth-overlay" onClick={onClose}>
-      <div
-        className="auth-card auth-card--wide"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* ── Close button ── */}
+      <div className="auth-card auth-card--wide" onClick={(e) => e.stopPropagation()}>
+
+        {/* ── Close ── */}
         <button className="auth-close" onClick={onClose} aria-label="Close">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <path d="M18 6L6 18M6 6l12 12"
-              stroke="currentColor" strokeWidth="2.2"
+            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2.2"
               strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </button>
@@ -111,6 +113,8 @@ export default function Signup({ onClose, onSwitchToLogin }) {
 
         {/* ── Form ── */}
         <form onSubmit={handleSubmit} className="auth-form">
+
+          {/* Row 1 — Name + Email */}
           <div className="auth-form-row">
             <div className="auth-field">
               <label className="auth-label">Full name</label>
@@ -119,11 +123,9 @@ export default function Signup({ onClose, onSwitchToLogin }) {
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                   <circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="2"/>
                 </svg>
-                <input
-                  type="text" name="name" placeholder="Jane Doe"
+                <input type="text" name="name" placeholder="Jane Doe"
                   value={form.name} onChange={handleChange}
-                  className="auth-input" autoComplete="name"
-                />
+                  className="auth-input" autoComplete="name"/>
               </div>
             </div>
 
@@ -134,15 +136,63 @@ export default function Signup({ onClose, onSwitchToLogin }) {
                   <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                   <polyline points="22,6 12,13 2,6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 </svg>
-                <input
-                  type="email" name="email" placeholder="you@example.com"
+                <input type="email" name="email" placeholder="you@example.com"
                   value={form.email} onChange={handleChange}
-                  className="auth-input" autoComplete="email"
-                />
+                  className="auth-input" autoComplete="email"/>
               </div>
             </div>
           </div>
 
+          {/* Row 2 — Phone + Date of Birth */}
+          <div className="auth-form-row">
+            <div className="auth-field">
+              <label className="auth-label">Phone number</label>
+              <div className="auth-input-wrap">
+                <svg className="auth-field-icon" width="15" height="15" viewBox="0 0 24 24" fill="none">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.07 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3 1.17h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <input type="tel" name="phone" placeholder="+91 98765 43210"
+                  value={form.phone} onChange={handleChange}
+                  className="auth-input" autoComplete="tel"/>
+              </div>
+            </div>
+
+            <div className="auth-field">
+              <label className="auth-label">Date of birth</label>
+              <div className="auth-input-wrap">
+                <svg className="auth-field-icon" width="15" height="15" viewBox="0 0 24 24" fill="none">
+                  <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  <line x1="8" y1="2" x2="8" y2="6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" strokeWidth="2"/>
+                </svg>
+                <input type="date" name="dob"
+                  value={form.dob} onChange={handleChange}
+                  className="auth-input auth-input--date"
+                  max={new Date().toISOString().split("T")[0]}/>
+              </div>
+            </div>
+          </div>
+
+          {/* Row 3 — Gender (radio buttons) */}
+          <div className="auth-field">
+            <label className="auth-label">Gender</label>
+            <div className="auth-gender-row">
+              {["Male", "Female", "Other", "Prefer not to say"].map((g) => (
+                <label key={g} className={`auth-gender-opt ${form.gender === g ? "auth-gender-opt--active" : ""}`}>
+                  <input
+                    type="radio" name="gender" value={g}
+                    checked={form.gender === g}
+                    onChange={handleChange}
+                    className="auth-radio"
+                  />
+                  <span>{g}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {/* Row 4 — Password + Confirm */}
           <div className="auth-form-row">
             <div className="auth-field">
               <label className="auth-label">Password</label>
@@ -151,12 +201,10 @@ export default function Signup({ onClose, onSwitchToLogin }) {
                   <rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" strokeWidth="2"/>
                   <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 </svg>
-                <input
-                  type={showPass ? "text" : "password"} name="password"
+                <input type={showPass ? "text" : "password"} name="password"
                   placeholder="Create a strong password"
                   value={form.password} onChange={handleChange}
-                  className="auth-input" autoComplete="new-password"
-                />
+                  className="auth-input" autoComplete="new-password"/>
                 <button type="button" className="auth-eye" onClick={() => setShowPass(p => !p)}>
                   {showPass ? (
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
@@ -175,8 +223,7 @@ export default function Signup({ onClose, onSwitchToLogin }) {
                   <div className="auth-strength-bars">
                     {[1,2,3,4].map(i => (
                       <div key={i} className="auth-strength-bar"
-                        style={{ background: i <= strength ? strengthColor : "rgba(255,255,255,0.08)", transition: "background 0.3s" }}
-                      />
+                        style={{ background: i <= strength ? strengthColor : "rgba(255,255,255,0.08)", transition: "background 0.3s" }}/>
                     ))}
                   </div>
                   <span className="auth-strength-lbl" style={{ color: strengthColor }}>{strengthLabel}</span>
@@ -191,13 +238,11 @@ export default function Signup({ onClose, onSwitchToLogin }) {
                   <rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" strokeWidth="2"/>
                   <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 </svg>
-                <input
-                  type={showPass ? "text" : "password"} name="confirm"
+                <input type={showPass ? "text" : "password"} name="confirm"
                   placeholder="Re-enter your password"
                   value={form.confirm} onChange={handleChange}
                   className={`auth-input ${form.confirm && form.password !== form.confirm ? "auth-input--err" : ""}`}
-                  autoComplete="new-password"
-                />
+                  autoComplete="new-password"/>
                 {form.confirm && form.password === form.confirm && (
                   <div className="auth-eye" style={{ pointerEvents: "none" }}>
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
@@ -209,8 +254,10 @@ export default function Signup({ onClose, onSwitchToLogin }) {
             </div>
           </div>
 
+          {/* Terms */}
           <label className="auth-terms">
-            <input type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)} className="auth-checkbox"/>
+            <input type="checkbox" checked={agreed}
+              onChange={e => setAgreed(e.target.checked)} className="auth-checkbox"/>
             <span>
               I agree to the{" "}
               <button type="button" className="auth-switch-link">Terms of Service</button>
@@ -219,6 +266,7 @@ export default function Signup({ onClose, onSwitchToLogin }) {
             </span>
           </label>
 
+          {/* Submit */}
           <button type="submit" className="auth-submit" disabled={loading}>
             {loading ? <span className="auth-spinner" /> : (
               <>
