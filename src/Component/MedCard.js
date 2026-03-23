@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";   // ← added
 import "./MedCard.css";
 import RefillRing from "./RefillRing";
 
@@ -62,12 +63,19 @@ function NoteIcon() {
 
 export default function MedCard({ med, onTake, onSkip, onToggleReminder }) {
   const [reminderSet, setReminderSet] = useState(med.reminderSet ?? false);
+  const navigate = useNavigate();    // ← added
 
   const isTaken   = med.status === "taken";
   const isSkipped = med.status === "skipped";
   const isDone    = isTaken || isSkipped;
   const refillPct = Math.round((med.refillLeft / med.refillTotal) * 100);
   const isLow     = med.refillLeft <= 7;
+
+  /* ── Navigate to edit page, passing the full med object as state ── */
+  const handleEdit = (e) => {
+    e.stopPropagation();
+    navigate(`/editMedicine/${med.id}`, { state: { med } });
+  };
 
   return (
     <div
@@ -171,11 +179,8 @@ export default function MedCard({ med, onTake, onSkip, onToggleReminder }) {
           <span style={{ color: isDone ? "#A0A6C0" : med.color }}>{med.countdown}</span>
         </div>
 
-        {/* ── Doctor & Instructions section (shown only if data exists) ── */}
         {(med.doctor || med.meal || med.priority) && (
           <div className="med-extra-info">
-
-            {/* Doctor row */}
             {med.doctor && (
               <div className="med-extra-row">
                 <span className="med-extra-icon" style={{ background:"#EFF6FF", color:"#2563EB" }}>
@@ -187,21 +192,15 @@ export default function MedCard({ med, onTake, onSkip, onToggleReminder }) {
                 </div>
               </div>
             )}
-
-            {/* Meal timing row */}
             {med.meal && (
               <div className="med-extra-row">
-                <span className="med-extra-icon" style={{ background:"#FFFBEB", color:"#B45309" }}>
-                  🍽️
-                </span>
+                <span className="med-extra-icon" style={{ background:"#FFFBEB", color:"#B45309" }}>🍽️</span>
                 <div className="med-extra-content">
                   <span className="med-extra-label">Meal timing</span>
                   <span className="med-extra-value">{med.meal}</span>
                 </div>
               </div>
             )}
-
-            {/* Priority row */}
             {med.priority && (
               <div className="med-extra-row">
                 <span className="med-extra-icon"
@@ -214,29 +213,23 @@ export default function MedCard({ med, onTake, onSkip, onToggleReminder }) {
                 <div className="med-extra-content">
                   <span className="med-extra-label">Priority</span>
                   <span className="med-extra-value"
-                    style={{
-                      color: med.priority==="Critical"?"#DC2626":med.priority==="High"?"#B45309":"#1A3A6B"
-                    }}>
+                    style={{ color: med.priority==="Critical"?"#DC2626":med.priority==="High"?"#B45309":"#1A3A6B" }}>
                     {med.priority}
                   </span>
                 </div>
               </div>
             )}
-
           </div>
         )}
 
-        {/* Special instructions box — shown only if notes exist beyond the short note */}
         {med.note && med.note.length > 20 && (
           <div className="med-instructions">
             <div className="med-instructions-header">
-              <NoteIcon />
-              <span>Special Instructions</span>
+              <NoteIcon /><span>Special Instructions</span>
             </div>
             <div className="med-instructions-text">{med.note}</div>
           </div>
         )}
-
       </div>
 
       {/* ── RIGHT ── */}
@@ -258,7 +251,15 @@ export default function MedCard({ med, onTake, onSkip, onToggleReminder }) {
             <span className="bell-dot" />
             <span className="bell-icon"><BellIcon /></span>
           </button>
-          <button className="edit-btn-right"><EditIcon /></button>
+
+          {/* ── Edit button — navigates to /editMedicine/:id ── */}
+          <button
+            className="edit-btn-right"
+            title="Edit medicine"
+            onClick={handleEdit}
+          >
+            <EditIcon />
+          </button>
         </div>
 
         <div className="adherence-block">

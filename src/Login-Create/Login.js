@@ -15,8 +15,8 @@ export default function Login({ onClose, onSwitchToSignup }) {
 
   /* Lock body scroll while modal is open */
   useEffect(() => {
-    document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = ""; };
+    document.documentElement.classList.add("modal-open");
+    return () => { document.documentElement.classList.remove("modal-open"); };
   }, []);
 
   /* Close on Escape key */
@@ -169,6 +169,23 @@ export default function Login({ onClose, onSwitchToSignup }) {
             Create one free →
           </button>
         </p>
+
+        {/* ── Admin access ── */}
+        <div className="auth-admin-divider">
+          <span>Admin Access</span>
+        </div>
+        <button
+          className="auth-admin-btn"
+          onClick={() => { onClose?.(); navigate("/admin/login"); }}
+          type="button"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
+              stroke="currentColor" strokeWidth="2"
+              strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          Sign in as Administrator
+        </button>
       </div>
     </div>
   );

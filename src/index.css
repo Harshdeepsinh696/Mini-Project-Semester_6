@@ -1,33 +1,34 @@
-/* ═══════════════════════════════════════════════════════
-   index.css  —  Global base styles
-   Place at: src/index.css
-   IMPORTANT: Do NOT put overflow:hidden or height:100vh
-   on html/body — it blocks page scrolling!
-═══════════════════════════════════════════════════════ */
-
-*,
-*::before,
-*::after {
+/* src/index.css */
+*, *::before, *::after {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 html {
+  background: #0b1120 !important;
+  background-color: #0b1120 !important;
   font-size: 16px;
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* ✅ NO overflow-y:hidden here */
+  overflow-x: hidden;
+  /* ❌ NO height — NO overflow-y */
 }
 
 body {
+  background: #0b1120 !important;
+  background-color: #0b1120 !important;
   margin: 0;
   padding: 0;
-  /* ✅ NO overflow-y:hidden here */
-  /* ✅ NO height:100vh here */
+  overflow-x: hidden;
+  min-height: 100vh;
+  /* ❌ NO height:100% — NO overflow-y */
 }
 
-/* Only the root wrapper — let it grow naturally */
 #root {
+  background: #0b1120 !important;
+  background-color: #0b1120 !important;
   min-height: 100vh;
-  /* ✅ NO overflow:hidden here */
+  /* ❌ NO height — NO overflow */
 }

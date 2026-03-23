@@ -70,18 +70,38 @@
   box-shadow: 0 8px 24px rgba(0,0,0,0.3);
 }
 .pp-avatar-img { width: 100%; height: 100%; object-fit: cover; }
-.pp-avatar-edit {
+.pp-photo-actions {
   position: absolute;
-  bottom: 2px; right: 2px;
+  bottom: -4px; right: -4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.pp-photo-btn {
   width: 26px; height: 26px;
   border-radius: 50%;
-  background: var(--pp-green);
   display: flex; align-items: center; justify-content: center;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.35);
   transition: transform 0.2s;
+  border: none;
 }
-.pp-avatar-edit:hover { transform: scale(1.1); }
+.pp-photo-btn:hover { transform: scale(1.12); }
+.pp-photo-btn--upload {
+  background: var(--pp-green);
+}
+.pp-photo-btn--remove {
+  background: #ef4444;
+}
+
+/* Photo hint text */
+.pp-photo-hint {
+  position: relative; z-index: 1;
+  margin-top: 10px;
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.4);
+  padding-left: 2px;
+}
 
 .pp-hero-info { flex: 1; }
 .pp-hero-name {

@@ -9,7 +9,7 @@
 }
 
 /* ── Avatar button ── */
-.pd-avatar {
+.pd-avatar-btn {
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -21,10 +21,11 @@
   cursor: pointer;
   position: relative;
   transition: border-color 0.2s, background 0.2s;
+  padding: 0;
+  overflow: hidden;
 }
-.pd-avatar:hover {
+.pd-avatar-btn:hover {
   border-color: #22C55E;
-  background: rgba(255,255,255,0.18);
 }
 .pd-avatar-dot {
   width: 9px;
@@ -35,6 +36,24 @@
   position: absolute;
   bottom: 0;
   right: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Shared avatar image / placeholder */
+.pd-av-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
+.pd-av-placeholder {
+  border-radius: 50%;
+  background: linear-gradient(135deg, #22C55E, #16a34a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 /* ── Dropdown panel ── */
@@ -67,12 +86,12 @@
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #22C55E, #16a34a);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 0 12px rgba(34,197,94,0.35);
+  overflow: hidden;
+  box-shadow: 0 0 12px rgba(34,197,94,0.25);
 }
 .pd-header-name {
   font-size: 0.88rem;

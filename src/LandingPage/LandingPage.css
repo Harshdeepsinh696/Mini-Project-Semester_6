@@ -31,23 +31,182 @@
   --nav-h:   68px;
 }
 
+/* ══════════════════════════════════════════════════════════
+   12-COLUMN GRID SYSTEM
+   ══════════════════════════════════════════════════════════ */
+:root {
+  --grid-cols:    12;
+  --grid-gap:     24px;
+  --grid-max:     1200px;
+  --grid-pad:     36px;
+  --col-1:  calc((100% - var(--grid-gap) * 11) / 12 * 1  + var(--grid-gap) * 0);
+  --col-2:  calc((100% - var(--grid-gap) * 11) / 12 * 2  + var(--grid-gap) * 1);
+  --col-3:  calc((100% - var(--grid-gap) * 11) / 12 * 3  + var(--grid-gap) * 2);
+  --col-4:  calc((100% - var(--grid-gap) * 11) / 12 * 4  + var(--grid-gap) * 3);
+  --col-5:  calc((100% - var(--grid-gap) * 11) / 12 * 5  + var(--grid-gap) * 4);
+  --col-6:  calc((100% - var(--grid-gap) * 11) / 12 * 6  + var(--grid-gap) * 5);
+  --col-7:  calc((100% - var(--grid-gap) * 11) / 12 * 7  + var(--grid-gap) * 6);
+  --col-8:  calc((100% - var(--grid-gap) * 11) / 12 * 8  + var(--grid-gap) * 7);
+  --col-9:  calc((100% - var(--grid-gap) * 11) / 12 * 9  + var(--grid-gap) * 8);
+  --col-10: calc((100% - var(--grid-gap) * 11) / 12 * 10 + var(--grid-gap) * 9);
+  --col-11: calc((100% - var(--grid-gap) * 11) / 12 * 11 + var(--grid-gap) * 10);
+  --col-12: 100%;
+}
+
+/* ── Grid container ── */
+.lp-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--grid-gap);
+  width: 100%;
+}
+
+/* ── Column span helpers ── */
+.lp-col-1  { grid-column: span 1; }
+.lp-col-2  { grid-column: span 2; }
+.lp-col-3  { grid-column: span 3; }
+.lp-col-4  { grid-column: span 4; }
+.lp-col-5  { grid-column: span 5; }
+.lp-col-6  { grid-column: span 6; }
+.lp-col-7  { grid-column: span 7; }
+.lp-col-8  { grid-column: span 8; }
+.lp-col-9  { grid-column: span 9; }
+.lp-col-10 { grid-column: span 10; }
+.lp-col-11 { grid-column: span 11; }
+.lp-col-12 { grid-column: span 12; }
+
+/* ── Column offset helpers ── */
+.lp-off-1  { grid-column-start: 2; }
+.lp-off-2  { grid-column-start: 3; }
+.lp-off-3  { grid-column-start: 4; }
+
+/* ── Grid row alignment ── */
+.lp-grid--center  { align-items: center; }
+.lp-grid--stretch { align-items: stretch; }
+
+/* ── Specific layout patterns ── */
+
+/* Hero: 6-6 split */
+.lp-grid--hero { grid-template-columns: repeat(12, 1fr); gap: var(--grid-gap); align-items: center; }
+.lp-grid--hero .lp-hero-copy { grid-column: span 6; }
+.lp-grid--hero .lp-mockup    { grid-column: span 6; }
+
+/* Stats bar: 4 equal columns */
+.lp-stats-inner {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+
+/* Features: 3 per row (4-4-4) */
+.lp-feat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+  width: 100%;
+}
+
+/* Steps / How it works: 3 equal columns */
+.lp-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--grid-gap);
+  margin-top: 52px;
+}
+
+/* Testimonials: 3 equal columns */
+.lp-t-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--grid-gap);
+  margin-top: 52px;
+  margin-bottom: 22px;
+  width: 100%;
+}
+
+/* Footer top: brand (4 cols) + links (8 cols) */
+.lp-footer-top {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--grid-gap);
+  margin-bottom: 40px;
+  align-items: flex-start;
+}
+.lp-footer-brand { grid-column: span 4; }
+.lp-footer-cols  { grid-column: span 8; justify-content: flex-end; }
+
+/* Footer columns: equal split */
+.lp-footer-cols { display: flex; gap: 48px; }
+
+/* Nav inner: logo | links | actions */
+.lp-nav-inner {
+  max-width: var(--grid-max);
+  margin: 0 auto;
+  padding: 0 var(--grid-pad);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+/* Proof banner */
+.lp-proof-inner {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  align-items: center;
+  gap: 12px;
+}
+
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* Belt-and-suspenders: ensure no white gap ever appears */
-html, body {
+
+/* ══════════════════════════════════════════════════════════
+   UNIVERSAL SECTION CONTAINER
+   Every section on the page uses .lp-wrap as its inner
+   container — same max-width, same padding, same grid.
+   ══════════════════════════════════════════════════════════ */
+
+/* The ONE container rule — used by EVERY section */
+.lp-wrap,
+.lp-wrap--narrow,
+.lp-stats-inner,
+.lp-proof-inner,
+.lp-footer-inner,
+.lp-nav-inner {
+  max-width: var(--grid-max);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--grid-pad);
+  padding-right: var(--grid-pad);
+  width: 100%;
+}
+
+/* Narrow variant — FAQ, narrow copy blocks */
+.lp-wrap--narrow { max-width: 780px; }
+
+/* Belt-and-suspenders: force dark background on EVERY element that could show white */
+html, body, #root {
   margin: 0 !important;
   padding: 0 !important;
-  background: #0b1120;
+  background: #0d0b1e !important;
+  background-color: #0d0b1e !important;
+  min-height: 100%;
 }
 
 .lp {
-  background: var(--bg);
+  background: #0b1120 !important;
+  background-color: #0b1120 !important;
   color: var(--t1);
   font-family: var(--font);
   min-height: 100vh;
   width: 100%;
   position: relative;
-  /* Anchor to top-left — no stray gaps */
   margin: 0;
   padding: 0;
 }
@@ -68,14 +227,14 @@ html, body {
   background-clip: text;
 }
 .lp-wrap {
-  max-width: 1120px;
+  max-width: var(--grid-max);
   margin: 0 auto;
-  padding: 0 36px;
+  padding: 0 var(--grid-pad);
 }
 .lp-wrap--narrow {
-  max-width: 760px;
+  max-width: var(--grid-max);
   margin: 0 auto;
-  padding: 0 36px;
+  padding: 0 var(--grid-pad);
 }
 .lp-section-label {
   font-size: 0.72rem;
@@ -128,14 +287,14 @@ html, body {
   box-shadow: 0 1px 24px rgba(0,0,0,0.3);
 }
 .lp-nav-inner {
-  max-width: 1120px;
+  max-width: var(--grid-max);
   margin: 0 auto;
-  padding: 0 36px;
+  padding: 0 var(--grid-pad);
   width: 100%;
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  justify-content: space-between;
-  gap: 24px;
+  gap: 32px;
 }
 
 /* Logo */
@@ -217,12 +376,17 @@ html, body {
 .lp-hamburger {
   display: none;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   gap: 5px;
-  background: none;
-  border: none;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  border-radius: 8px;
   cursor: pointer;
-  padding: 6px;
+  padding: 8px;
   flex-shrink: 0;
+  width: 38px;
+  height: 38px;
 }
 .lp-hamburger span {
   display: block;
@@ -231,38 +395,54 @@ html, body {
   border-radius: 2px;
   transition: all 0.25s;
 }
-.lp-hamburger span.open:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-.lp-hamburger span.open:nth-child(2) { opacity: 0; }
-.lp-hamburger span.open:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+.lp-hamburger span.open:nth-child(1) { transform: translateY(7px) rotate(45deg); background: var(--green); }
+.lp-hamburger span.open:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.lp-hamburger span.open:nth-child(3) { transform: translateY(-7px) rotate(-45deg); background: var(--green); }
 
 /* Mobile dropdown */
 .lp-mobile-menu {
-  position: absolute;
+  position: fixed;
   top: var(--nav-h);
   left: 0; right: 0;
-  background: rgba(11,17,32,0.98);
-  backdrop-filter: blur(20px);
+  z-index: 499;
+  background: rgba(8,13,28,0.99);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border-bottom: 1px solid var(--border);
-  padding: 20px 24px 24px;
+  padding: 20px var(--grid-pad) 28px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  animation: menuSlideDown 0.2s ease both;
+}
+@keyframes menuSlideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 .lp-mobile-menu a {
   color: var(--t2);
   text-decoration: none;
   font-size: 0.95rem;
   font-weight: 500;
-  padding: 10px 0;
+  padding: 14px 0;
   border-bottom: 1px solid var(--border);
   transition: color 0.2s;
+  display: flex;
+  align-items: center;
 }
+.lp-mobile-menu a:last-of-type { border-bottom: none; }
 .lp-mobile-menu a:hover { color: var(--white); }
-.lp-mobile-btns { display: flex; gap: 10px; margin-top: 16px; }
+.lp-mobile-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 18px;
+  padding-top: 4px;
+}
 .lp-mobile-btns button {
-  flex: 1;
-  padding: 11px;
-  border-radius: 9px;
+  padding: 12px;
+  border-radius: 10px;
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -272,10 +452,17 @@ html, body {
   color: var(--t2);
   transition: all 0.2s;
 }
+.lp-mobile-btns button:hover {
+  background: rgba(255,255,255,0.06);
+  color: var(--white);
+}
 .lp-mobile-btns button.solid {
   background: var(--green);
   border-color: var(--green);
   color: #071018;
+}
+.lp-mobile-btns button.solid:hover {
+  background: #2dd86a;
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -287,8 +474,9 @@ html, body {
   display: flex;
   align-items: center;
   position: relative;
-  overflow: clip;
-  background: var(--bg);          /* prevents white flash in padding-top zone */
+  overflow: hidden;
+  background: #0b1120 !important;
+  background-color: #0b1120 !important;
 }
 .lp-hero-bg {
   position: absolute;
@@ -326,18 +514,28 @@ html, body {
 .lp-hero-inner {
   position: relative;
   z-index: 1;
-  max-width: 1120px;
+  max-width: var(--grid-max);
   margin: 0 auto;
-  padding: 60px 36px 80px;
+  padding: 72px var(--grid-pad) 88px;
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 64px;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--grid-gap);
   align-items: center;
+}
+.lp-hero-copy {
+  grid-column: span 6;
+  display: flex;
+  flex-direction: column;
+}
+.lp-mockup {
+  grid-column: span 6;
+  position: relative;
+  z-index: 1;
 }
 
 /* Hero copy */
-.lp-hero-copy { display: flex; flex-direction: column; }
+/* .lp-hero-copy handled above in .lp-hero-inner */
 .lp-tag-pill {
   display: inline-flex;
   align-items: center;
@@ -446,12 +644,7 @@ html, body {
 .lp-btn-outline--lg   { padding: 14px 28px; font-size: 0.98rem; }
 
 /* ── Mockup ── */
-.lp-mockup {
-  position: relative;
-  z-index: 1;
-  /* animation removed */
-}
-/* floatMock keyframes removed */
+/* .lp-mockup handled in .lp-hero-inner grid */
 .lp-mockup-shell {
   background: var(--bg-3);
   border: 1px solid var(--bhi);
@@ -502,7 +695,7 @@ html, body {
   padding: 8px 10px; border-radius: 9px; border: 1px solid;
 }
 .lp-mk-stat--blue  { background: rgba(59,130,246,0.07);  border-color: rgba(59,130,246,0.16); }
-.lp-mk-stat--green { background: rgba(34,197,94,0.07);   border-color: rgba(34,197,94,0.16); }
+.lp-mk-stat--green { background: rgba(245,158,11,0.07);   border-color: rgba(34,197,94,0.16); }
 .lp-mk-stat--amber { background: rgba(245,158,11,0.07);  border-color: rgba(245,158,11,0.16); }
 .lp-mk-stat span   { font-size: 0.95rem; }
 .lp-mk-stat-n { font-size: 1.15rem; font-weight: 800; line-height: 1; }
@@ -560,7 +753,7 @@ html, body {
 
 .lp-mk-streak {
   background: rgba(245,158,11,0.07);
-  border: 1px solid rgba(245,158,11,0.18);
+  border: 1px solid rgba(34,197,94,0.18);
   border-radius: 8px;
   padding: 7px 10px;
   font-size: 0.7rem;
@@ -597,18 +790,16 @@ html, body {
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
   padding: 36px 0;
-  background: rgba(255,255,255,0.018);
+  background: #0c1326;
 }
 .lp-stats-inner {
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 0 36px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+  gap: 0;
 }
 .lp-stat {
   text-align: center;
-  padding: 0 20px;
+  padding: 0 var(--grid-pad);
   position: relative;
 }
 .lp-stat + .lp-stat::before {
@@ -634,12 +825,72 @@ html, body {
   letter-spacing: 0.07em;
 }
 
+
+/* ══════════════════════════════════════════════════════════
+   GRID BACKGROUND — applied to Features, How, Reviews, FAQ
+   Same subtle grid pattern as hero, with section-specific
+   radial masks so it fades at edges
+   ══════════════════════════════════════════════════════════ */
+
+/* Shared grid mixin — applied via class */
+.lp-grid-bg {
+  position: relative;
+}
+.lp-grid-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 90% at 50% 50%, black 20%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 90% at 50% 50%, black 20%, transparent 100%);
+}
+/* All children inside must be above the grid */
+.lp-grid-bg > * { position: relative; z-index: 1; }
+
+/* Features — grid fades from top */
+.lp-features.lp-grid-bg::before {
+  mask-image: radial-gradient(ellipse 100% 80% at 50% 0%, black 10%, transparent 90%);
+  -webkit-mask-image: radial-gradient(ellipse 100% 80% at 50% 0%, black 10%, transparent 90%);
+  background-size: 56px 56px;
+}
+
+/* How it works — grid centered */
+.lp-how.lp-grid-bg::before {
+  mask-image: radial-gradient(ellipse 90% 80% at 50% 50%, black 20%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 50%, black 20%, transparent 100%);
+  background-image:
+    linear-gradient(rgba(34,197,94,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34,197,94,0.04) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+/* Reviews — diagonal fade */
+.lp-reviews.lp-grid-bg::before {
+  mask-image: radial-gradient(ellipse 85% 70% at 50% 40%, black 15%, transparent 95%);
+  -webkit-mask-image: radial-gradient(ellipse 85% 70% at 50% 40%, black 15%, transparent 95%);
+  background-size: 52px 52px;
+}
+
+/* FAQ — grid fades to bottom */
+.lp-faq.lp-grid-bg::before {
+  mask-image: radial-gradient(ellipse 90% 80% at 50% 100%, black 10%, transparent 85%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 100%, black 10%, transparent 85%);
+  background-size: 56px 56px;
+}
+
 /* ══════════════════════════════════════════════════════════
    FEATURES
    ══════════════════════════════════════════════════════════ */
 .lp-features {
   padding: 96px 0;
   border-top: 1px solid var(--border);
+  background: #0b1120;
+  overflow: hidden;
 }
 .lp-feat-grid {
   display: grid;
@@ -649,6 +900,7 @@ html, body {
   border: 1px solid var(--border);
   border-radius: 18px;
   overflow: hidden;
+  width: 100%;
 }
 .lp-feat {
   background: var(--bg-2);
@@ -686,12 +938,15 @@ html, body {
 .lp-how {
   padding: 96px 0;
   border-top: 1px solid var(--border);
+  background: #0b1120;
+  overflow: hidden;
 }
 .lp-steps {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  gap: var(--grid-gap);
   margin-top: 52px;
+  width: 100%;
 }
 .lp-step {
   background: var(--bg-2);
@@ -726,19 +981,15 @@ html, body {
 .lp-proof-banner {
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
-  background: rgba(34,197,94,0.03);
+  background: #0c1326;
   padding: 20px 0;
   overflow: hidden;
 }
 .lp-proof-inner {
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 0 36px;
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   align-items: center;
-  justify-content: space-between;
   gap: 12px;
-  flex-wrap: wrap;
 }
 .lp-proof-item {
   display: flex;
@@ -758,13 +1009,16 @@ html, body {
 .lp-reviews {
   padding: 96px 0;
   border-top: 1px solid var(--border);
+  background: #0b1120;
+  overflow: hidden;
 }
 .lp-t-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  gap: var(--grid-gap);
   margin-top: 52px;
   margin-bottom: 22px;
+  width: 100%;
 }
 .lp-t-card {
   background: var(--bg-2);
@@ -824,29 +1078,36 @@ html, body {
 .lp-faq {
   padding: 96px 0;
   border-top: 1px solid var(--border);
+  background: #0b1120;
+  overflow: hidden;
 }
 .lp-faq-list {
   margin-top: 48px;
   display: flex;
   flex-direction: column;
-  gap: 0;
   border: 1px solid var(--border);
   border-radius: 16px;
   overflow: hidden;
 }
+
 .lp-faq-item {
   border-bottom: 1px solid var(--border);
   background: var(--bg-2);
-  transition: background 0.2s;
+  border-left: 3px solid transparent;
+  transition: background 0.25s, border-left-color 0.25s;
 }
 .lp-faq-item:last-child { border-bottom: none; }
-.lp-faq-item.open { background: var(--bg-3); }
+.lp-faq-item.open {
+  background: var(--bg-3);
+  border-left-color: var(--green);
+}
+
 .lp-faq-q {
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
+  padding: 22px 24px;
   background: none;
   border: none;
   color: var(--white);
@@ -859,17 +1120,34 @@ html, body {
   transition: color 0.2s;
 }
 .lp-faq-q:hover { color: var(--green); }
+.lp-faq-item.open .lp-faq-q { color: var(--green); }
+
 .lp-faq-chevron {
   flex-shrink: 0;
   color: var(--t3);
-  transition: transform 0.3s var(--ease);
+  transition: transform 0.3s var(--ease), color 0.2s;
+  min-width: 18px;
 }
-.lp-faq-item.open .lp-faq-chevron { transform: rotate(180deg); color: var(--green); }
+.lp-faq-item.open .lp-faq-chevron {
+  transform: rotate(180deg);
+  color: var(--green);
+}
+
+/* Answer — max-height animation, simple and reliable */
+.lp-faq-a-wrap {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s var(--ease);
+}
+.lp-faq-item.open .lp-faq-a-wrap {
+  max-height: 400px;
+}
+
 .lp-faq-a {
   padding: 0 24px 20px;
   font-size: 0.88rem;
   color: var(--t2);
-  line-height: 1.75;
+  line-height: 1.8;
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -899,9 +1177,9 @@ html, body {
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.1em;
-  color: var(--green);
-  border: 1px solid var(--green-md);
-  background: var(--green-lo);
+  color: #22c55e;
+  border: 1px solid rgba(34,197,94,0.18);
+  background: rgba(34,197,94,0.08);
   padding: 5px 13px;
   border-radius: 999px;
   margin-bottom: 20px;
@@ -930,19 +1208,22 @@ html, body {
 .lp-footer {
   border-top: 1px solid var(--border);
   padding: 52px 0 32px;
+  background: #0b1120;
 }
 .lp-footer-inner {
-  max-width: 1120px;
+  max-width: var(--grid-max);
   margin: 0 auto;
-  padding: 0 36px;
+  padding: 0 var(--grid-pad);
 }
 .lp-footer-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 48px;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--grid-gap);
   margin-bottom: 40px;
+  align-items: flex-start;
 }
+.lp-footer-brand { grid-column: span 4; }
+.lp-footer-cols  { grid-column: span 8; justify-content: flex-end; }
 .lp-footer-brand { display: flex; flex-direction: column; gap: 10px; }
 .lp-footer-tagline { font-size: 0.82rem; color: var(--t3); max-width: 220px; line-height: 1.5; }
 .lp-footer-cols { display: flex; gap: 48px; }
@@ -978,34 +1259,260 @@ html, body {
 /* ══════════════════════════════════════════════════════════
    RESPONSIVE
    ══════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE GRID BREAKPOINTS
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Tablet: ≤ 1024px ── */
 @media (max-width: 1024px) {
-  .lp-hero-inner { grid-template-columns: 1fr; gap: 52px; text-align: center; }
-  .lp-hero-copy  { align-items: center; }
-  .lp-mockup     { max-width: 500px; margin: 0 auto; }
+  :root {
+    --grid-gap: 20px;
+    --grid-pad: 28px;
+  }
+
+  /* Hero: stack to single column (12 cols each) */
+  .lp-hero-inner {
+    grid-template-columns: 1fr;
+    gap: 48px;
+    text-align: center;
+  }
+  .lp-hero-copy { grid-column: span 1; align-items: center; }
+  .lp-mockup    { grid-column: span 1; max-width: 500px; margin: 0 auto; }
+
+  /* Nav: hide links, keep logo + actions */
+  .lp-nav-inner { grid-template-columns: auto auto; justify-content: space-between; gap: 16px; }
+  .lp-nav-links { display: none; }
+
+  /* Features: 2 per row */
   .lp-feat-grid  { grid-template-columns: repeat(2, 1fr); }
-  .lp-steps      { grid-template-columns: 1fr; max-width: 420px; margin-left: auto; margin-right: auto; }
-  .lp-t-grid     { grid-template-columns: 1fr; max-width: 420px; margin-left: auto; margin-right: auto; }
-  /* Show only active card on tablet */
+
+  /* Steps: 2 per row */
+  .lp-steps { grid-template-columns: repeat(2, 1fr); }
+
+  /* Stats: 2 per row */
+  .lp-stats-inner { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  .lp-stat + .lp-stat::before { display: none; }
+
+  /* Testimonials: 1 column, show only active */
+  .lp-t-grid { grid-template-columns: 1fr; max-width: 440px; margin-left: auto; margin-right: auto; }
   .lp-t-card { display: none; }
   .lp-t-card.lp-t-on { display: block; }
-  .lp-stats-inner{ grid-template-columns: repeat(2, 1fr); gap: 24px; }
-  .lp-proof-inner{ justify-content: center; }
+
+  /* Proof banner: 2 per row */
+  .lp-proof-inner { grid-template-columns: repeat(2, 1fr); }
   .lp-proof-divider { display: none; }
+
+  /* Footer: stack brand + links */
+  .lp-footer-top { grid-template-columns: 1fr; gap: 32px; }
 }
+
+/* ── Mobile: ≤ 768px ── */
 @media (max-width: 768px) {
-  :root { --nav-h: 60px; }
+  :root {
+    --nav-h:    60px;
+    --grid-gap: 16px;
+    --grid-pad: 20px;
+  }
+
+  /* Nav: hamburger only */
   .lp-nav-links  { display: none; }
   .lp-nav-login  { display: none; }
   .lp-nav-cta    { display: none; }
   .lp-hamburger  { display: flex; }
-  .lp-hero-inner { padding: 48px 20px 60px; }
-  .lp-wrap, .lp-wrap--narrow { padding: 0 20px; }
-  .lp-features, .lp-how, .lp-reviews, .lp-faq { padding: 72px 0; }
+
+  /* Hero: tighter padding */
+  .lp-hero-inner { padding: 40px var(--grid-pad) 56px; gap: 36px; }
+
+  /* Features: 1 per row */
   .lp-feat-grid  { grid-template-columns: 1fr; }
-  .lp-cta { margin: 0 16px 60px; padding: 52px 22px; }
-  .lp-footer-inner { padding: 0 20px; }
-  .lp-footer-top { flex-direction: column; gap: 28px; }
-  .lp-footer-bottom { flex-direction: column; gap: 6px; }
-  .lp-stats-inner { padding: 0 20px; }
+
+  /* Steps: 1 per row */
+  .lp-steps { grid-template-columns: 1fr; max-width: 400px; margin-left: auto; margin-right: auto; }
+
+  /* Stats: 2 per row still */
+  .lp-stats-inner { grid-template-columns: repeat(2, 1fr); padding: 0 var(--grid-pad); }
+
+  /* Proof banner: stack */
+  .lp-proof-inner { grid-template-columns: 1fr; gap: 8px; }
+
+  /* Section padding */
+  .lp-features, .lp-how, .lp-reviews, .lp-faq { padding: 64px 0; }
+
+  /* CTA */
+  .lp-cta { margin: 0 16px 56px; padding: 48px 22px; }
+
+  /* Footer */
+  .lp-footer-inner { padding: 0 var(--grid-pad); }
+  .lp-footer-top { grid-template-columns: 1fr; }
+  .lp-footer-cols { flex-wrap: wrap; gap: 28px; }
+  .lp-footer-bottom { flex-direction: column; gap: 10px; text-align: center; }
+
+  /* Hide floating notifs */
   .lp-notif { display: none; }
+}
+
+/* ── Small mobile: ≤ 480px ── */
+@media (max-width: 480px) {
+  :root {
+    --grid-gap: 12px;
+    --grid-pad: 16px;
+  }
+
+  /* Stats: stack */
+  .lp-stats-inner { grid-template-columns: 1fr 1fr; }
+
+  /* Hero heading */
+  .lp-hero-h1 { font-size: 2.2rem; }
+
+  /* Wrap padding tighter */
+  .lp-wrap, .lp-wrap--narrow { padding: 0 var(--grid-pad); }
+}/* ══════════════════════════════════════════════════════════
+   RESPONSIVE — Full device support
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Large desktop: > 1200px ── */
+@media (min-width: 1200px) {
+  .lp-notif-1 { left: -56px; }
+  .lp-notif-2 { right: -56px; }
+  .lp-notif-3 { left: 8px; }
+}
+
+/* ── Tablet landscape: ≤ 1024px ── */
+@media (max-width: 1024px) {
+  :root {
+    --grid-gap: 20px;
+    --grid-pad: 28px;
+  }
+
+  /* Nav — switch to logo + hamburger */
+  .lp-nav-inner      { gap: 16px; }
+  .lp-nav-links      { display: none; }
+  .lp-nav-actions    { display: none; }
+  .lp-hamburger      { display: flex; }
+
+  /* Hero — single column, centered */
+  .lp-hero-inner     { grid-template-columns: 1fr; gap: 48px; text-align: center; padding: 60px var(--grid-pad) 72px; }
+  .lp-hero-copy      { grid-column: span 1; align-items: center; }
+  .lp-hero-p         { margin: 0 auto 34px; }
+  .lp-mockup         { grid-column: span 1; max-width: 520px; margin: 0 auto; }
+  .lp-notif          { display: none; }
+
+  /* Features — 2 per row */
+  .lp-feat-grid      { grid-template-columns: repeat(2, 1fr); }
+
+  /* Steps — 2 per row */
+  .lp-steps          { grid-template-columns: repeat(2, 1fr); }
+
+  /* Stats — 2 per row */
+  .lp-stats-inner    { grid-template-columns: repeat(2, 1fr); gap: 28px; }
+  .lp-stat + .lp-stat::before { display: none; }
+
+  /* Testimonials — 1 col, show only active */
+  .lp-t-grid         { grid-template-columns: 1fr; max-width: 480px; margin: 48px auto 22px; }
+  .lp-t-card         { display: none; }
+  .lp-t-card.lp-t-on { display: block; }
+
+  /* Proof banner — 2 per row */
+  .lp-proof-inner    { grid-template-columns: repeat(2, 1fr); justify-items: center; }
+  .lp-proof-divider  { display: none; }
+
+  /* Footer */
+  .lp-footer-top     { flex-direction: column; gap: 32px; }
+  .lp-footer-cols    { flex-wrap: wrap; gap: 28px; }
+}
+
+/* ── Tablet portrait: ≤ 768px ── */
+@media (max-width: 768px) {
+  :root {
+    --nav-h:    60px;
+    --grid-gap: 16px;
+    --grid-pad: 20px;
+  }
+
+  /* Nav */
+  .lp-nav-links, .lp-nav-login, .lp-nav-cta { display: none; }
+  .lp-hamburger  { display: flex; }
+
+  /* Hero */
+  .lp-hero-inner { padding: 48px var(--grid-pad) 60px; gap: 40px; }
+  .lp-hero-h1    { font-size: clamp(2.2rem, 7vw, 3.2rem); }
+  .lp-mockup     { max-width: 100%; }
+
+  /* Features — 1 per row */
+  .lp-feat-grid  { grid-template-columns: 1fr; }
+
+  /* Steps — 1 per row */
+  .lp-steps      { grid-template-columns: 1fr; max-width: 420px; margin-left: auto; margin-right: auto; }
+
+  /* Stats — 2 per row */
+  .lp-stats-inner { grid-template-columns: repeat(2, 1fr); }
+
+  /* Proof — 1 per row */
+  .lp-proof-inner { grid-template-columns: 1fr; gap: 10px; }
+
+  /* Sections vertical rhythm */
+  .lp-features, .lp-how, .lp-reviews, .lp-faq { padding: 64px 0; }
+
+  /* CTA card */
+  .lp-cta {
+    margin: 0 var(--grid-pad) 56px;
+    padding: 52px 24px;
+    border-radius: 16px;
+  }
+
+  /* Footer */
+  .lp-footer-top     { flex-direction: column; }
+  .lp-footer-cols    { flex-wrap: wrap; gap: 24px; }
+  .lp-footer-bottom  { flex-direction: column; gap: 8px; text-align: center; }
+
+  /* FAQ narrow */
+  .lp-wrap--narrow   { max-width: 100%; }
+}
+
+/* ── Mobile: ≤ 480px ── */
+@media (max-width: 480px) {
+  :root {
+    --grid-gap: 12px;
+    --grid-pad: 16px;
+  }
+
+  /* Hero */
+  .lp-hero-inner { padding: 40px var(--grid-pad) 52px; }
+  .lp-hero-h1    { font-size: clamp(2rem, 8vw, 2.6rem); letter-spacing: -0.025em; }
+  .lp-hero-p     { font-size: 0.95rem; }
+  .lp-hero-btns  { flex-direction: column; align-items: center; gap: 10px; }
+  .lp-btn-green, .lp-btn-outline { width: 100%; justify-content: center; }
+
+  /* Stats — 2 col smaller */
+  .lp-stats-inner { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .lp-stat-n      { font-size: 1.8rem; }
+
+  /* Proof — 1 col */
+  .lp-proof-inner { grid-template-columns: 1fr; }
+
+  /* Features — remove border radius on mobile */
+  .lp-feat-grid  { border-radius: 12px; }
+
+  /* CTA */
+  .lp-cta        { margin: 0 var(--grid-pad) 48px; padding: 44px 18px; }
+  .lp-cta-h2     { font-size: 1.8rem; }
+  .lp-cta-btns   { flex-direction: column; align-items: center; }
+  .lp-btn-green--lg, .lp-btn-outline--lg { width: 100%; justify-content: center; padding: 13px 20px; }
+
+  /* Mobile menu tighter */
+  .lp-mobile-menu { padding: 16px var(--grid-pad) 20px; }
+
+  /* Footer */
+  .lp-footer-cols { gap: 20px; }
+  .lp-footer-bottom { font-size: 0.72rem; }
+
+  /* Section padding */
+  .lp-features, .lp-how, .lp-reviews, .lp-faq { padding: 52px 0; }
+}
+
+/* ── Extra small: ≤ 360px ── */
+@media (max-width: 360px) {
+  :root { --grid-pad: 14px; }
+  .lp-hero-h1 { font-size: 1.85rem; }
+  .lp-nav-inner { padding: 0 14px; }
 }

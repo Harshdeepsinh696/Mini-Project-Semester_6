@@ -64,7 +64,7 @@ export default function LandingPage() {
   /* Close mobile menu on scroll */
   useEffect(() => {
     if (mobileMenu) setMobileMenu(false);
-  }, [scrolled, mobileMenu]);
+  }, [scrolled]);
 
   /* Testimonial rotate */
   useEffect(() => {
@@ -117,7 +117,7 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="lp">
+    <div className="lp" style={{ background: "#0b1120", backgroundColor: "#0b1120", minHeight: "100vh" }}>
 
       {/* ══ NAVBAR ══ */}
       <header className={`lp-nav ${scrolled ? "lp-nav--solid" : ""}`}>
@@ -149,7 +149,12 @@ export default function LandingPage() {
           </div>
 
           {/* Mobile hamburger */}
-          <button className="lp-hamburger" onClick={() => setMobileMenu(p => !p)} aria-label="Menu">
+          <button
+            className="lp-hamburger"
+            onClick={() => setMobileMenu(p => !p)}
+            aria-label={mobileMenu ? "Close menu" : "Open menu"}
+            aria-expanded={mobileMenu}
+          >
             <span className={mobileMenu ? "open" : ""} />
             <span className={mobileMenu ? "open" : ""} />
             <span className={mobileMenu ? "open" : ""} />
@@ -159,27 +164,27 @@ export default function LandingPage() {
         {/* Mobile dropdown */}
         {mobileMenu && (
           <div className="lp-mobile-menu">
-            <a href="#features"    onClick={() => setMobileMenu(false)}>Features</a>
-            <a href="#how-it-works"onClick={() => setMobileMenu(false)}>How it works</a>
-            <a href="#reviews"     onClick={() => setMobileMenu(false)}>Reviews</a>
-            <a href="#faq"         onClick={() => setMobileMenu(false)}>FAQ</a>
+            <a href="#features"     onClick={() => setMobileMenu(false)}>Features</a>
+            <a href="#how-it-works" onClick={() => setMobileMenu(false)}>How it works</a>
+            <a href="#reviews"      onClick={() => setMobileMenu(false)}>Reviews</a>
+            <a href="#faq"          onClick={() => setMobileMenu(false)}>FAQ</a>
             <div className="lp-mobile-btns">
-              <button onClick={() => navigate("/login")}>Log in</button>
-              <button className="solid" onClick={() => navigate("/signup")}>Get started free</button>
+              <button onClick={() => { navigate("/login");  setMobileMenu(false); }}>Log in</button>
+              <button className="solid" onClick={() => { navigate("/signup"); setMobileMenu(false); }}>Get started free</button>
             </div>
           </div>
         )}
       </header>
 
       {/* ══ HERO ══ */}
-      <section className="lp-hero">
+      <section className="lp-hero" style={{ background: "#0b1120", backgroundColor: "#0b1120" }}>
         <div className="lp-hero-bg">
           <div className="lp-blob lp-blob-1" />
           <div className="lp-blob lp-blob-2" />
           <div className="lp-hero-grid" />
         </div>
 
-        <div className="lp-hero-inner">
+        <div className="lp-hero-inner lp-grid lp-grid--center">
           {/* Copy */}
           <div className="lp-hero-copy">
             <div className="lp-tag-pill" data-reveal>
@@ -307,7 +312,7 @@ export default function LandingPage() {
 
       {/* ══ STATS BAR ══ */}
       <div className="lp-stats" ref={statsRef}>
-        <div className="lp-stats-inner">
+        <div className="lp-stats-inner container">
           {STATS.map((s, i) => (
             <div className="lp-stat" key={s.label} data-reveal data-delay={i * 60}>
               <div className="lp-stat-n">{statsAnimated.current ? fmtCount(counts[i], i) : s.value}</div>
@@ -318,7 +323,7 @@ export default function LandingPage() {
       </div>
 
       {/* ══ FEATURES ══ */}
-      <section className="lp-features" id="features">
+      <section className="lp-features lp-grid-bg" id="features">
         <div className="lp-wrap">
           <div className="lp-section-label" data-reveal>Features</div>
           <h2 className="lp-section-h2" data-reveal data-delay="60">
@@ -343,7 +348,7 @@ export default function LandingPage() {
       </section>
 
       {/* ══ HOW IT WORKS ══ */}
-      <section className="lp-how" id="how-it-works">
+      <section className="lp-how lp-grid-bg" id="how-it-works">
         <div className="lp-wrap">
           <div className="lp-section-label" data-reveal>How it works</div>
           <h2 className="lp-section-h2" data-reveal data-delay="60">
@@ -365,27 +370,27 @@ export default function LandingPage() {
 
       {/* ══ SOCIAL PROOF BANNER ══ */}
       <div className="lp-proof-banner">
-        <div className="lp-proof-inner">
-          <div className="lp-proof-item">
+        <div className="lp-proof-inner lp-grid">
+          <div className="lp-proof-item lp-col-3">
             <span>💊</span> 2.4M+ doses logged this month
           </div>
           <div className="lp-proof-divider" />
-          <div className="lp-proof-item">
+          <div className="lp-proof-item lp-col-3">
             <span>🔥</span> 127K active streaks right now
           </div>
           <div className="lp-proof-divider" />
-          <div className="lp-proof-item">
+          <div className="lp-proof-item lp-col-3">
             <span>⭐</span> Rated #1 medication tracker on App Store
           </div>
           <div className="lp-proof-divider" />
-          <div className="lp-proof-item">
+          <div className="lp-proof-item lp-col-3">
             <span>🏥</span> Trusted by 3,200+ healthcare providers
           </div>
         </div>
       </div>
 
       {/* ══ TESTIMONIALS ══ */}
-      <section className="lp-reviews" id="reviews">
+      <section className="lp-reviews lp-grid-bg" id="reviews">
         <div className="lp-wrap">
           <div className="lp-section-label" data-reveal>Reviews</div>
           <h2 className="lp-section-h2" data-reveal data-delay="60">
@@ -423,7 +428,7 @@ export default function LandingPage() {
       </section>
 
       {/* ══ FAQ ══ */}
-      <section className="lp-faq" id="faq">
+      <section className="lp-faq lp-grid-bg" id="faq">
         <div className="lp-wrap lp-wrap--narrow">
           <div className="lp-section-label" data-reveal>FAQ</div>
           <h2 className="lp-section-h2" data-reveal data-delay="60">
@@ -431,23 +436,78 @@ export default function LandingPage() {
           </h2>
 
           <div className="lp-faq-list">
-            {FAQ.map((item, i) => (
-              <div
-                className={`lp-faq-item ${openFaq === i ? "open" : ""}`}
-                key={i}
-                data-reveal data-delay={i * 50}
-              >
-                <button className="lp-faq-q" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
-                  <span>{item.q}</span>
-                  <svg className="lp-faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none">
-                    <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </button>
-                {openFaq === i && (
-                  <div className="lp-faq-a">{item.a}</div>
-                )}
-              </div>
-            ))}
+            {FAQ.map((item, i) => {
+              const isOpen = openFaq === i;
+              return (
+                <div
+                  key={i}
+                  style={{
+                    borderBottom: i < FAQ.length - 1 ? "1px solid rgba(255,255,255,0.07)" : "none",
+                    background: isOpen ? "#131f35" : "#0f1a2e",
+                    borderLeft: isOpen ? "3px solid #22c55e" : "3px solid transparent",
+                    transition: "background 0.25s, border-left-color 0.25s",
+                  }}
+                >
+                  {/* Question row */}
+                  <button
+                    onClick={() => setOpenFaq(isOpen ? null : i)}
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      padding: "22px 24px",
+                      background: "none",
+                      border: "none",
+                      color: isOpen ? "#22c55e" : "#f8fafc",
+                      fontSize: "0.95rem",
+                      fontWeight: 600,
+                      cursor: "pointer",
+                      textAlign: "left",
+                      gap: "16px",
+                      fontFamily: "inherit",
+                      transition: "color 0.2s",
+                    }}
+                  >
+                    <span>{item.q}</span>
+                    <svg
+                      width="18" height="18" viewBox="0 0 24 24" fill="none"
+                      style={{
+                        flexShrink: 0,
+                        color: isOpen ? "#22c55e" : "#64748b",
+                        transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
+                        transition: "transform 0.3s ease, color 0.2s",
+                        minWidth: 18,
+                      }}
+                    >
+                      <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
+
+                  {/* Answer — always in DOM, max-height animates */}
+                  <div
+                    style={{
+                      maxHeight: isOpen ? "400px" : "0px",
+                      overflow: "hidden",
+                      transition: "max-height 0.4s ease",
+                    }}
+                  >
+                    <div
+                      style={{
+                        padding: "0 24px 20px",
+                        fontSize: "0.88rem",
+                        color: "#94a3b8",
+                        lineHeight: 1.8,
+                        borderTop: "1px solid rgba(255,255,255,0.06)",
+                        paddingTop: "14px",
+                      }}
+                    >
+                      {item.a}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
