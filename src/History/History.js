@@ -1,121 +1,71 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import Layout from "../Layout/Layout";
 import MedCard from "../Component/MedCard";
 import FilterTabs from "../Component/FilterTabs";
 import "./History.css";
 
-/* ─── Medicine data ──────────────────────────────────────────────────────── */
-const historyMeds = [
-  {
-    id: 1, name: "Aspirin", dose: "500mg", qty: "1 or 1/2 tablet",
-    icon: "💊", color: "#2563EB", colorGradStart: "#1A3A6B", colorGradEnd: "#2563EB",
-    time: "08:00", ampm: "PM", note: "Take after dinner",
-    frequency: "Once in Day", countdown: "Taken on time",
-    status: "taken", refillLeft: 14, refillTotal: 30,
-    category: "Pain Relief", sideEffect: "Take with water",
-    histDate: "Feb 27, 2025", histDay: "Today", histDayNum: 27,
-  },
-  {
-    id: 2, name: "Vitamin D", dose: "1000 IU", qty: "1 capsule",
-    icon: "🌿", color: "#16A34A", colorGradStart: "#064E3B", colorGradEnd: "#22C55E",
-    time: "08:00", ampm: "AM", note: "Take with breakfast",
-    frequency: "Once in Day", countdown: "Skipped this dose",
-    status: "skipped", refillLeft: 22, refillTotal: 30,
-    category: "Supplement", sideEffect: "Best with food",
-    histDate: "Feb 27, 2025", histDay: "Today", histDayNum: 27,
-  },
-  {
-    id: 3, name: "Metformin", dose: "850mg", qty: "1 tablet",
-    icon: "🔵", color: "#1d55cc", colorGradStart: "#1A3A6B", colorGradEnd: "#3B82F6",
-    time: "08:00", ampm: "PM", note: "Take before dinner",
-    frequency: "Twice in Day", countdown: "Taken on time",
-    status: "taken", refillLeft: 5, refillTotal: 30,
-    category: "Diabetes", sideEffect: "Avoid alcohol",
-    histDate: "Feb 27, 2025", histDay: "Today", histDayNum: 27,
-  },
-  {
-    id: 4, name: "Aspirin", dose: "500mg", qty: "1 or 1/2 tablet",
-    icon: "💊", color: "#2563EB", colorGradStart: "#1A3A6B", colorGradEnd: "#2563EB",
-    time: "08:00", ampm: "PM", note: "Take after dinner",
-    frequency: "Once in Day", countdown: "Taken on time",
-    status: "taken", refillLeft: 15, refillTotal: 30,
-    category: "Pain Relief", sideEffect: "Take with water",
-    histDate: "Feb 26, 2025", histDay: "Yesterday", histDayNum: 26,
-  },
-  {
-    id: 5, name: "Vitamin D", dose: "1000 IU", qty: "1 capsule",
-    icon: "🌿", color: "#16A34A", colorGradStart: "#064E3B", colorGradEnd: "#22C55E",
-    time: "08:00", ampm: "AM", note: "Take with breakfast",
-    frequency: "Once in Day", countdown: "Taken on time",
-    status: "taken", refillLeft: 23, refillTotal: 30,
-    category: "Supplement", sideEffect: "Best with food",
-    histDate: "Feb 26, 2025", histDay: "Yesterday", histDayNum: 26,
-  },
-  {
-    id: 6, name: "Metformin", dose: "850mg", qty: "1 tablet",
-    icon: "🔵", color: "#1d55cc", colorGradStart: "#1A3A6B", colorGradEnd: "#3B82F6",
-    time: "08:00", ampm: "PM", note: "Take before dinner",
-    frequency: "Twice in Day", countdown: "Skipped this dose",
-    status: "skipped", refillLeft: 6, refillTotal: 30,
-    category: "Diabetes", sideEffect: "Avoid alcohol",
-    histDate: "Feb 26, 2025", histDay: "Yesterday", histDayNum: 26,
-  },
-  {
-    id: 7, name: "Omega-3", dose: "1000mg", qty: "2 capsules",
-    icon: "🐟", color: "#0E7490", colorGradStart: "#164E63", colorGradEnd: "#0891B2",
-    time: "01:00", ampm: "PM", note: "Take with lunch",
-    frequency: "Once in Day", countdown: "Taken on time",
-    status: "taken", refillLeft: 30, refillTotal: 60,
-    category: "Supplement", sideEffect: "Store in fridge",
-    histDate: "Feb 25, 2025", histDay: "Feb 25", histDayNum: 25,
-  },
-  {
-    id: 8, name: "Lisinopril", dose: "10mg", qty: "1 tablet",
-    icon: "❤️", color: "#1A3A6B", colorGradStart: "#1A3A6B", colorGradEnd: "#2563EB",
-    time: "09:00", ampm: "AM", note: "Take on empty stomach",
-    frequency: "Once in Day", countdown: "Taken on time",
-    status: "taken", refillLeft: 11, refillTotal: 30,
-    category: "Blood Pressure", sideEffect: "Avoid grapefruit",
-    histDate: "Feb 25, 2025", histDay: "Feb 25", histDayNum: 25,
-  },
-  {
-    id: 9, name: "Aspirin", dose: "500mg", qty: "1 or 1/2 tablet",
-    icon: "💊", color: "#2563EB", colorGradStart: "#1A3A6B", colorGradEnd: "#2563EB",
-    time: "08:00", ampm: "PM", note: "Take after dinner",
-    frequency: "Once in Day", countdown: "Taken on time",
-    status: "taken", refillLeft: 16, refillTotal: 30,
-    category: "Pain Relief", sideEffect: "Take with water",
-    histDate: "Feb 24, 2025", histDay: "Feb 24", histDayNum: 24,
-  },
-  {
-    id: 10, name: "Zinc", dose: "25mg", qty: "1 tablet",
-    icon: "⚡", color: "#1E6B4A", colorGradStart: "#14532D", colorGradEnd: "#22C55E",
-    time: "10:00", ampm: "AM", note: "Take after breakfast",
-    frequency: "Once in Day", countdown: "Taken on time",
-    status: "taken", refillLeft: 47, refillTotal: 60,
-    category: "Supplement", sideEffect: "Take with food",
-    histDate: "Feb 24, 2025", histDay: "Feb 24", histDayNum: 24,
-  },
-];
-
+const BASE = "https://localhost:7205";
 const HISTORY_TABS = ["All", "Taken", "Skipped"];
 
-const JUMP_DAYS = [
-  { abbr: "THU", num: 27, today: true  },
-  { abbr: "WED", num: 26, today: false },
-  { abbr: "TUE", num: 25, today: false },
-  { abbr: "MON", num: 24, today: false },
-  { abbr: "SUN", num: 23, today: false },
-  { abbr: "SAT", num: 22, today: false },
-  { abbr: "FRI", num: 21, today: false },
-];
+const formatTime = (time) => {
+  if (!time) return { time: "--:--", ampm: "" };
+  const date = new Date(`1970-01-01T${time}`);
+  const h = date.getHours(), m = date.getMinutes();
+  return {
+    time: `${String(h % 12 || 12).padStart(2, "0")}:${String(m).padStart(2, "0")}`,
+    ampm: h >= 12 ? "PM" : "AM"
+  };
+};
 
-/* ─── Helpers ──────────────────────────────────────────────────────────────── */
+const toMedCard = (m) => {
+  const t = formatTime(m.doseTime);
+  const logDate = m.logDate ? new Date(m.logDate) : new Date();
+  return {
+    id: Number(m.id),
+    name: m.medicineName,
+    dose: `${m.dosage} ${m.dosageUnit}`,
+    qty: m.medicineForm || "1 tablet",
+    icon: "💊",
+    color: "#2563EB",
+    category: m.medicineForm,
+    refillLeft: m.stockQuantity || 10,
+    refillTotal: 30,
+    time: t.time,
+    ampm: t.ampm,
+    note: m.notes,
+    doctor: m.prescribedBy,
+    meal: m.mealTiming,
+    frequency: m.frequencyType,
+    priority: m.priorityLevel,
+    status: m.status || "pending",
+    countdown: m.status === "taken" ? "Taken on time" : "Skipped this dose",
+    reminderSet: m.isReminderOn || false,
+    histDate: logDate.toLocaleDateString("en-IN", {
+      day: "numeric", month: "short", year: "numeric"
+    }),
+    histDay: isToday(logDate)
+      ? "Today"
+      : isYesterday(logDate)
+      ? "Yesterday"
+      : logDate.toLocaleDateString("en-IN", { month: "short", day: "numeric" }),
+    histDayNum: logDate.getDate(),
+  };
+};
+
+const isToday = (d) => {
+  const t = new Date();
+  return d.getDate() === t.getDate() && d.getMonth() === t.getMonth() && d.getFullYear() === t.getFullYear();
+};
+const isYesterday = (d) => {
+  const y = new Date(); y.setDate(y.getDate() - 1);
+  return d.getDate() === y.getDate() && d.getMonth() === y.getMonth() && d.getFullYear() === y.getFullYear();
+};
+
 function groupByDate(items) {
   const map = {};
   items.forEach(item => {
-    if (!map[item.histDate])
-      map[item.histDate] = { label: item.histDay, entries: [] };
+    if (!map[item.histDate]) map[item.histDate] = { label: item.histDay, entries: [] };
     map[item.histDate].entries.push(item);
   });
   return map;
@@ -127,170 +77,62 @@ function badgeClass(taken, total) {
 }
 
 function dateIcon(label) {
-  if (label === "Today")     return "📅";
+  if (label === "Today") return "📅";
   if (label === "Yesterday") return "🕐";
   return "📄";
 }
 
-/* ─── Sub-components ───────────────────────────────────────────────────────── */
-
-/* Weekly heatmap */
-function WeeklyHeatmap({ meds }) {
-  const WEEK = [
-    { label: "Mon 24", d: 24 },
-    { label: "Tue 25", d: 25 },
-    { label: "Wed 26", d: 26 },
-    { label: "Thu 27", d: 27 },
-    { label: "Fri 28", d: 28 },
-    { label: "Sat 1",  d: 1  },
-    { label: "Sun 2",  d: 2  },
-  ];
-
-  const dm = {};
-  meds.forEach(m => {
-    const k = m.histDayNum;
-    if (!dm[k]) dm[k] = { t: 0, n: 0 };
-    dm[k].n++;
-    if (m.status === "taken") dm[k].t++;
-  });
-
-  return (
-    <div className="hist-panel">
-      <div className="hist-panel-title">Weekly Overview</div>
-      <div className="hist-heatmap-grid">
-        {WEEK.map(({ label, d }) => {
-          const data = dm[d];
-          const pct  = data ? data.t / data.n : -1;
-          const cls  = pct < 0 ? "hb-empty" : pct === 1 ? "hb-full" : pct >= 0.5 ? "hb-partial" : "hb-low";
-          return (
-            <div key={label} className="hist-heat-cell">
-              <div className={`hist-heat-block ${cls}`}>
-                {data && <span className="hist-heat-val">{data.t}/{data.n}</span>}
-              </div>
-              <span className="hist-heat-lbl">{label}</span>
-            </div>
-          );
-        })}
-      </div>
-      <div className="hist-heat-legend">
-        <span className="hleg-item"><span className="hleg-dot d-full" />100%</span>
-        <span className="hleg-item"><span className="hleg-dot d-partial" />≥50%</span>
-        <span className="hleg-item"><span className="hleg-dot d-low" />&lt;50%</span>
-        <span className="hleg-item"><span className="hleg-dot d-empty" />No data</span>
-      </div>
-    </div>
-  );
-}
-
-/* Adherence bar */
-function AdherenceBar({ meds }) {
-  const taken   = meds.filter(m => m.status === "taken").length;
-  const skipped = meds.filter(m => m.status === "skipped").length;
-  const total   = meds.length;
-  const pct     = total > 0 ? Math.round((taken / total) * 100) : 0;
-  return (
-    <div className="hist-panel">
-      <div className="hist-adh-top">
-        <span className="hist-adh-title">Overall Adherence</span>
-        <div className="hist-adh-chips">
-          <span className="hist-chip c-blue">{pct}%</span>
-          <span className="hist-chip c-green">{taken} of {total} taken</span>
-          {skipped > 0 && <span className="hist-chip c-red">{skipped} skipped</span>}
-        </div>
-      </div>
-      <div className="hist-adh-track">
-        <div className="hist-adh-fill" style={{ width: `${pct}%` }} />
-      </div>
-    </div>
-  );
-}
-
-/* Jump-to-day strip (vertical pills in left column) */
-function JumpToDay({ selectedDay, onSelect }) {
-  return (
-    <div className="hist-panel">
-      <div className="hist-panel-title">Jump to Day</div>
-      <div className="hist-cal-strip">
-        {JUMP_DAYS.map(({ abbr, num, today }) => {
-          const active = selectedDay === num;
-          return (
-            <button
-              key={num}
-              className={`hist-cal-pill ${today ? "hcp-today" : ""} ${active ? "hcp-active" : ""}`}
-              onClick={() => onSelect(active ? null : num)}
-            >
-              {today && <span className="hist-cal-dot" />}
-              <span className="hist-cal-day-abbr">{abbr}</span>
-              <span className="hist-cal-day-num">{num}</span>
-            </button>
-          );
-        })}
-        {selectedDay && (
-          <button className="hist-cal-clear" onClick={() => onSelect(null)}>
-            Clear filter ✕
-          </button>
-        )}
-      </div>
-    </div>
-  );
-}
-
-/* ─── Main ──────────────────────────────────────────────────────────────────── */
 export default function History() {
   const [activeFilter, setActiveFilter] = useState("All");
-  const [selectedDay, setSelectedDay]   = useState(null);
-  const [meds, setMeds]                 = useState(historyMeds);
+  const [meds, setMeds] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleTake = id =>
-    setMeds(prev => prev.map(m =>
-      m.id === id ? { ...m, status: "taken", countdown: "Taken on time" } : m
-    ));
+  useEffect(() => { fetchHistory(activeFilter); }, [activeFilter]);
 
-  const handleSkip = (id, undo = false) =>
-    setMeds(prev => prev.map(m =>
-      m.id === id
-        ? undo
-          ? { ...m, status: "taken",   countdown: "Taken on time"    }
-          : { ...m, status: "skipped", countdown: "Skipped this dose" }
-        : m
-    ));
+  const fetchHistory = async (filter) => {
+    try {
+      setLoading(true);
+      const userId = parseInt(localStorage.getItem("userId"));
+      if (!userId) return;
+      const res = await axios.get(
+        `${BASE}/api/medicine/history/${userId}?filter=${filter.toLowerCase()}`
+      );
+      setMeds(res.data.map(toMedCard));
+    } catch (err) {
+      console.error("History fetch error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  /* Stats */
   const takenCount   = meds.filter(m => m.status === "taken").length;
   const skippedCount = meds.filter(m => m.status === "skipped").length;
-  const totalCount   = meds.length;
-  const adherencePct = Math.round((takenCount / totalCount) * 100);
+  const adherencePct = meds.length > 0
+    ? Math.round((takenCount / meds.length) * 100) : 0;
 
-  /* Filter */
-  const filtered = meds.filter(m => {
-    if (selectedDay && m.histDayNum !== selectedDay) return false;
-    if (activeFilter === "Taken")   return m.status === "taken";
-    if (activeFilter === "Skipped") return m.status === "skipped";
-    return true;
-  });
-
-  const grouped = groupByDate(filtered);
+  const grouped = groupByDate(meds);
 
   return (
     <Layout>
       <div className="hist-main">
-
-        {/* ── Top header ── */}
         <div className="hist-header">
           <div className="hist-greeting">
             <h1>Medicine History 📋</h1>
-            <p>{totalCount} doses recorded across the last 7 days</p>
+            <p>{meds.length} dose records found</p>
           </div>
-          <div className="hist-date-chip">📅 <b>Thursday</b>, Feb 27</div>
+          <div className="hist-date-chip">
+            📅 <b>{new Date().toLocaleDateString("en-IN", {
+              weekday: "long", day: "numeric", month: "short"
+            })}</b>
+          </div>
         </div>
 
-        {/* ── Stat cards ── */}
         <div className="hist-stats-row">
           <div className="hist-stat-card sc-blue">
             <div className="hist-stat-icon">📋</div>
             <div className="hist-stat-info">
               <div className="hist-stat-label">Total Records</div>
-              <div className="hist-stat-value">{totalCount}</div>
+              <div className="hist-stat-value">{meds.length}</div>
             </div>
           </div>
           <div className="hist-stat-card sc-green">
@@ -314,38 +156,23 @@ export default function History() {
               <div className="hist-stat-value">{adherencePct}%</div>
             </div>
           </div>
-          <button className="hist-add-btn">
-            <div className="hist-add-label">Add<br />Medicine</div>
-            <div className="hist-add-circle">+</div>
-          </button>
         </div>
 
-        {/* ══ Two-column body ══ */}
         <div className="hist-body">
-
-          {/* ── LEFT: controls ── */}
-          <div className="hist-left-col">
-            <WeeklyHeatmap meds={meds} />
-            <AdherenceBar  meds={meds} />
-            <JumpToDay selectedDay={selectedDay} onSelect={setSelectedDay} />
-          </div>
-
-          {/* ── RIGHT: cards ── */}
-          <div className="hist-right-col">
-
-            {/* List header */}
+          <div className="hist-right-col" style={{ gridColumn: "1 / -1" }}>
             <div className="hist-list-head">
               <div className="hist-list-title">History</div>
               <FilterTabs
                 tabs={HISTORY_TABS}
                 active={activeFilter}
-                onChange={f => { setActiveFilter(f); setSelectedDay(null); }}
+                onChange={setActiveFilter}
               />
             </div>
 
-            {/* Scrollable card list */}
             <div className="hist-cards">
-              {Object.keys(grouped).length === 0 ? (
+              {loading ? (
+                <div className="hist-empty">Loading...</div>
+              ) : Object.keys(grouped).length === 0 ? (
                 <div className="hist-empty">No medicine records for this filter</div>
               ) : (
                 Object.entries(grouped).map(([date, { label, entries }]) => {
@@ -365,13 +192,13 @@ export default function History() {
                         </span>
                         <div className="hist-dg-line" />
                       </div>
-
                       {entries.map(med => (
                         <MedCard
-                          key={med.id}
+                          key={`${med.id}-${date}`}
                           med={med}
-                          onTake={handleTake}
-                          onSkip={handleSkip}
+                          onTake={() => {}}
+                          onSkip={() => {}}
+                          onToggleReminder={() => {}}
                         />
                       ))}
                     </div>
@@ -380,10 +207,7 @@ export default function History() {
               )}
             </div>
           </div>
-
         </div>
-        {/* ══ end body ══ */}
-
       </div>
     </Layout>
   );

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";   // ← added
+import { useNavigate } from "react-router-dom";
 import "./MedCard.css";
 import RefillRing from "./RefillRing";
 
@@ -61,17 +61,103 @@ function NoteIcon() {
   );
 }
 
+function CalendarIcon({ size = 13, color = "currentColor" }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2"
+      strokeLinecap="round" strokeLinejoin="round" width={size} height={size}>
+      <rect x="3" y="4" width="18" height="18" rx="3" ry="3" />
+      <line x1="16" y1="2" x2="16" y2="6" />
+      <line x1="8" y1="2" x2="8" y2="6" />
+      <line x1="3" y1="10" x2="21" y2="10" />
+    </svg>
+  );
+}
+
+function ArrowRightIcon({ size = 10, color = "#7A8FB5" }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5"
+      strokeLinecap="round" strokeLinejoin="round" width={size} height={size}>
+      <line x1="5" y1="12" x2="19" y2="12" />
+      <polyline points="12 5 19 12 12 19" />
+    </svg>
+  );
+}
+
+/** Parses "25 Mar 2026" → { day, month, year } for display */
+function parseDateParts(dateStr) {
+  if (!dateStr || dateStr === "N/A") return null;
+  const parts = dateStr.trim().split(" ");
+  if (parts.length === 3) return { day: parts[0], month: parts[1], year: parts[2] };
+  // fallback: return as-is
+  return { day: dateStr, month: "", year: "" };
+}
+
+/** Professional date display — replaces the oversized time row */
+function DateRange({ startDate, endDate, isDone }) {
+  const start = parseDateParts(startDate);
+  const end = endDate && endDate !== "N/A" ? parseDateParts(endDate) : null;
+  const sameDate = end && startDate === endDate;
+
+  return (
+    <div className={`med-date-range ${isDone ? "done" : ""}`}>
+      {/* ── START DATE ── */}
+      <div className="med-date-block">
+        <span className="mdb-label">
+          <CalendarIcon size={10} color={isDone ? "#A0A6C0" : "#2563EB"} />
+          {end && !sameDate ? "Start date" : "Date"}
+        </span>
+        {start ? (
+          <div className="mdb-value">
+            <span className="mdb-day">{start.day}</span>
+            <div className="mdb-month-year">
+              <span className="mdb-month">{start.month}</span>
+              <span className="mdb-year">{start.year}</span>
+            </div>
+          </div>
+        ) : (
+          <span className="mdb-na">—</span>
+        )}
+      </div>
+
+      {/* ── DIVIDER (only when there's a real end date different from start) ── */}
+      {end && !sameDate && (
+        <>
+          <div className="med-date-sep">
+            <div className="med-date-sep-line" />
+            <ArrowRightIcon size={11} color={isDone ? "#C0C8DC" : "#93B4FF"} />
+            <div className="med-date-sep-line" />
+          </div>
+
+          {/* ── END DATE ── */}
+          <div className="med-date-block">
+            <span className="mdb-label">
+              <CalendarIcon size={10} color={isDone ? "#A0A6C0" : "#EF4444"} />
+              End date
+            </span>
+            <div className="mdb-value">
+              <span className="mdb-day" style={{ color: isDone ? "#B0BBDA" : "#DC2626" }}>{end.day}</span>
+              <div className="mdb-month-year">
+                <span className="mdb-month">{end.month}</span>
+                <span className="mdb-year">{end.year}</span>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 export default function MedCard({ med, onTake, onSkip, onToggleReminder }) {
   const [reminderSet, setReminderSet] = useState(med.reminderSet ?? false);
-  const navigate = useNavigate();    // ← added
+  const navigate = useNavigate();
 
-  const isTaken   = med.status === "taken";
+  const isTaken = med.status === "taken";
   const isSkipped = med.status === "skipped";
-  const isDone    = isTaken || isSkipped;
+  const isDone = isTaken || isSkipped;
   const refillPct = Math.round((med.refillLeft / med.refillTotal) * 100);
-  const isLow     = med.refillLeft <= 7;
+  const isLow = med.refillLeft <= 7;
 
-  /* ── Navigate to edit page, passing the full med object as state ── */
   const handleEdit = (e) => {
     e.stopPropagation();
     navigate(`/editMedicine/${med.id}`, { state: { med } });
@@ -92,7 +178,7 @@ export default function MedCard({ med, onTake, onSkip, onToggleReminder }) {
         <div className="med-identity">
           <div className="med-name">{med.name}</div>
           <span className="med-category-badge"
-            style={{ background:`${med.color}15`, color:med.color, borderColor:`${med.color}40` }}>
+            style={{ background: `${med.color}15`, color: med.color, borderColor: `${med.color}40` }}>
             {med.category}
           </span>
           <div className="med-sub">{med.dose} · {med.qty}</div>
@@ -142,25 +228,27 @@ export default function MedCard({ med, onTake, onSkip, onToggleReminder }) {
 
       {/* ── CENTER ── */}
       <div className="med-center">
-        <div className="med-time-row">
-          <span className="med-time"
-            style={!isDone ? { backgroundImage:`linear-gradient(135deg,${FIXED_GRAD_START} 0%,${FIXED_GRAD_END} 100%)` } : {}}>
-            {med.time}
-          </span>
-          <span className="med-ampm">{med.ampm}</span>
-        </div>
 
-        <div className="med-note">
-          <span className="note-bar"
-            style={{ background:`linear-gradient(180deg,${FIXED_GRAD_START},${FIXED_GRAD_END})` }} />
-          {med.note}
+        {/* ✦ NEW: Professional Date Range Block */}
+        <div className={`med-date-range ${isDone ? "done" : ""}`}>
+          <div className="med-date-block">
+            <span className="mdb-label">
+              <ClockIcon size={10} color={isDone ? "#A0A6C0" : "#2563EB"} />
+              Dose Time
+            </span>
+            <div className="mdb-value">
+              <span className="mdb-day">{med.time}</span>
+              <div className="mdb-month-year">
+                <span className="mdb-month">{med.ampm}</span>
+              </div>
+            </div>
+          </div>
         </div>
-
         <div className="tags-row">
           <span className="tag freq">{med.frequency}</span>
-          {isTaken   && <span className="tag taken-tag">✓ Taken</span>}
+          {isTaken && <span className="tag taken-tag">✓ Taken</span>}
           {isSkipped && <span className="tag skipped-tag">✕ Skipped</span>}
-          {!isDone   && <span className="tag pend-tag"><span className="pend-dot" />Pending</span>}
+          {!isDone && <span className="tag pend-tag"><span className="pend-dot" />Pending</span>}
           {med.sideEffect && (
             <span className="tag info-tag">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
@@ -183,18 +271,18 @@ export default function MedCard({ med, onTake, onSkip, onToggleReminder }) {
           <div className="med-extra-info">
             {med.doctor && (
               <div className="med-extra-row">
-                <span className="med-extra-icon" style={{ background:"#EFF6FF", color:"#2563EB" }}>
+                <span className="med-extra-icon" style={{ background: "#EFF6FF", color: "#2563EB" }}>
                   <DoctorIcon />
                 </span>
                 <div className="med-extra-content">
                   <span className="med-extra-label">Prescribed by</span>
-                  <span className="med-extra-value">Dr. {med.doctor.replace(/^dr\.?\s*/i,"")}</span>
+                  <span className="med-extra-value">Dr. {med.doctor.replace(/^dr\.?\s*/i, "")}</span>
                 </div>
               </div>
             )}
             {med.meal && (
               <div className="med-extra-row">
-                <span className="med-extra-icon" style={{ background:"#FFFBEB", color:"#B45309" }}>🍽️</span>
+                <span className="med-extra-icon" style={{ background: "#FFFBEB", color: "#B45309" }}>🍽️</span>
                 <div className="med-extra-content">
                   <span className="med-extra-label">Meal timing</span>
                   <span className="med-extra-value">{med.meal}</span>
@@ -205,15 +293,15 @@ export default function MedCard({ med, onTake, onSkip, onToggleReminder }) {
               <div className="med-extra-row">
                 <span className="med-extra-icon"
                   style={{
-                    background: med.priority==="Critical"?"#FEE2E2":med.priority==="High"?"#FEF3C7":"#EFF6FF",
-                    color:      med.priority==="Critical"?"#DC2626":med.priority==="High"?"#B45309":"#2563EB",
+                    background: med.priority === "Critical" ? "#FEE2E2" : med.priority === "High" ? "#FEF3C7" : "#EFF6FF",
+                    color: med.priority === "Critical" ? "#DC2626" : med.priority === "High" ? "#B45309" : "#2563EB",
                   }}>
-                  {med.priority==="Critical"?"🔴":med.priority==="High"?"🟠":med.priority==="Medium"?"🟡":"🟢"}
+                  {med.priority === "Critical" ? "🔴" : med.priority === "High" ? "🟠" : med.priority === "Medium" ? "🟡" : "🟢"}
                 </span>
                 <div className="med-extra-content">
                   <span className="med-extra-label">Priority</span>
                   <span className="med-extra-value"
-                    style={{ color: med.priority==="Critical"?"#DC2626":med.priority==="High"?"#B45309":"#1A3A6B" }}>
+                    style={{ color: med.priority === "Critical" ? "#DC2626" : med.priority === "High" ? "#B45309" : "#1A3A6B" }}>
                     {med.priority}
                   </span>
                 </div>
@@ -235,9 +323,9 @@ export default function MedCard({ med, onTake, onSkip, onToggleReminder }) {
       {/* ── RIGHT ── */}
       <div className="med-right">
         <div className="right-top-row">
-          {isTaken   && <div className="done-badge">✓ TAKEN</div>}
+          {isTaken && <div className="done-badge">✓ TAKEN</div>}
           {isSkipped && <div className="skipped-badge">✕ SKIPPED</div>}
-          {!isDone   && <div style={{ flex: 1 }} />}
+          {!isDone && <div style={{ flex: 1 }} />}
 
           <button
             className={`reminder-btn ${reminderSet ? "active" : ""}`}
@@ -252,12 +340,7 @@ export default function MedCard({ med, onTake, onSkip, onToggleReminder }) {
             <span className="bell-icon"><BellIcon /></span>
           </button>
 
-          {/* ── Edit button — navigates to /editMedicine/:id ── */}
-          <button
-            className="edit-btn-right"
-            title="Edit medicine"
-            onClick={handleEdit}
-          >
+          <button className="edit-btn-right" title="Edit medicine" onClick={handleEdit}>
             <EditIcon />
           </button>
         </div>
@@ -265,16 +348,28 @@ export default function MedCard({ med, onTake, onSkip, onToggleReminder }) {
         <div className="adherence-block">
           <div className="adherence-title">Weekly Adherence</div>
           <div className="adherence-dots">
-            {["M","T","W","T","F","S","S"].map((day, i) => {
-              const taken = i < 4, today = i === 4;
+            {["M", "T", "W", "T", "F", "S", "S"].map((day, i) => {
+              const todayIndex = new Date().getDay();
+
+              // Sunday=0 → make it last (index 6)
+              const adjustedToday = todayIndex === 0 ? 6 : todayIndex - 1;
+
+              const isTaken = i < adjustedToday;
+              const isToday = i === adjustedToday;
+
               return (
-                <div key={i} className={`adh-dot-wrap ${today ? "today" : ""}`}>
+                <div key={i} className={`adh-dot-wrap ${isToday ? "today" : ""}`}>
                   <div
-                    className={`adh-dot ${taken ? "taken" : today ? "today-dot" : "missed"}`}
-                    style={taken ? {
-                      background:`linear-gradient(135deg,${FIXED_COLOR_GREEN_START},${FIXED_COLOR_GREEN_END})`,
-                      boxShadow:`0 2px 6px ${med.color}55`
-                    } : {}}
+                    className={`adh-dot ${isTaken ? "taken" : isToday ? "today-dot" : "missed"
+                      }`}
+                    style={
+                      isTaken
+                        ? {
+                          background: `linear-gradient(135deg,${FIXED_COLOR_GREEN_START},${FIXED_COLOR_GREEN_END})`,
+                          boxShadow: `0 2px 6px ${med.color}55`,
+                        }
+                        : {}
+                    }
                   />
                   <span className="adh-day">{day}</span>
                 </div>
@@ -286,7 +381,7 @@ export default function MedCard({ med, onTake, onSkip, onToggleReminder }) {
         <div className="right-divider" />
 
         <div className="med-visual-card"
-          style={{ background:"linear-gradient(145deg,#EFF6FF 0%,#fff 60%)", borderColor:"#BFDBFE" }}>
+          style={{ background: "linear-gradient(145deg,#EFF6FF 0%,#fff 60%)", borderColor: "#BFDBFE" }}>
           <div className="med-visual-blob blob1" style={{ background: FIXED_GRAD_START }} />
           <div className="med-visual-blob blob2" style={{ background: FIXED_GRAD_END }} />
           <div className="med-visual-icon">{med.icon}</div>
@@ -296,7 +391,7 @@ export default function MedCard({ med, onTake, onSkip, onToggleReminder }) {
               <div className="med-visual-bar-track">
                 <div className="med-visual-bar-fill"
                   style={{
-                    width:`${refillPct}%`,
+                    width: `${refillPct}%`,
                     background: isLow ? "#EF4444" : `linear-gradient(90deg,${FIXED_GRAD_START},${FIXED_GRAD_END})`
                   }} />
               </div>

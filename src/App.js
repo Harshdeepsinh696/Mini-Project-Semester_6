@@ -15,6 +15,9 @@ import Signup        from "./Login-Create/Signup";
 import ProfilePage   from "./Profile/ProfilePage";
 import EditMedicine  from "./EditMedicine/EditMedicine";
 
+import MyMedicines from "./MyMedicines/MyMedicines";
+import HealthInfo  from "./HealthInfo/HealthInfo";
+
 /* Admin */
 import AdminLogin    from "./Admin/AdminLogin";
 import AdminDashboard from "./Admin/AdminDashboard";
@@ -95,6 +98,8 @@ export default function App() {
             <Route path="/settings"    element={<Today/>}/>
             <Route path="/profile"     element={<ProfilePage/>}/>
             <Route path="/editMedicine/:id" element={<EditMedicine/>}/>
+            <Route path="/my-medicines" element={<MyMedicines />} />
+            <Route path="/health-info"  element={<HealthInfo />}  />
             {/* Admin */}
             <Route path="/admin/login"         element={<AdminLogin/>}/>
             <Route path="/admin"               element={<AdminDashboard/>}/>

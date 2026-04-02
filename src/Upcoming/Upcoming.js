@@ -1,20 +1,106 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import Layout from "../Layout/Layout";
 import MedCard from "../Component/MedCard";
 import FilterTabs from "../Component/FilterTabs";
 import "./Upcoming.css";
 
-const upcomingSchedule = [
-  { id: 1, name: "Aspirin", dose: "500mg", qty: "1 or 1/2 tablet", icon: "💊", color: "#2563EB", colorGradStart: "#1A3A6B", colorGradEnd: "#2563EB", daysFromNow: 0, scheduledDate: "Today", scheduledDay: "Thu", time: "08:00", ampm: "PM", note: "Take after dinner", frequency: "Once in Day", category: "Pain Relief", sideEffect: "Take with water", refillLeft: 14, refillTotal: 30, reminderSet: true, streak: 7, countdown: "Due today" },
-  { id: 2, name: "Vitamin D", dose: "1000 IU", qty: "1 capsule", icon: "🌿", color: "#16A34A", colorGradStart: "#064E3B", colorGradEnd: "#22C55E", daysFromNow: 1, scheduledDate: "Tomorrow", scheduledDay: "Fri", time: "08:00", ampm: "AM", note: "Take with breakfast", frequency: "Once in Day", category: "Supplement", sideEffect: "Best with food", refillLeft: 22, refillTotal: 30, reminderSet: true, streak: 12, countdown: "In 1 day" },
-  { id: 3, name: "Metformin", dose: "850mg", qty: "1 tablet", icon: "🔵", color: "#1d55cc", colorGradStart: "#1A3A6B", colorGradEnd: "#3B82F6", daysFromNow: 1, scheduledDate: "Tomorrow", scheduledDay: "Fri", time: "08:00", ampm: "PM", note: "Take before dinner", frequency: "Twice in Day", category: "Diabetes", sideEffect: "Avoid alcohol", refillLeft: 5, refillTotal: 30, reminderSet: false, streak: 3, countdown: "In 1 day" },
-  { id: 4, name: "Omega-3", dose: "1000mg", qty: "2 capsules", icon: "🐟", color: "#0E7490", colorGradStart: "#164E63", colorGradEnd: "#0891B2", daysFromNow: 2, scheduledDate: "Sat, Mar 1", scheduledDay: "Sat", time: "01:00", ampm: "PM", note: "Take with lunch", frequency: "Once in Day", category: "Supplement", sideEffect: "Store in fridge", refillLeft: 28, refillTotal: 60, reminderSet: true, streak: 21, countdown: "In 2 days" },
-  { id: 5, name: "Lisinopril", dose: "10mg", qty: "1 tablet", icon: "❤️", color: "#1A3A6B", colorGradStart: "#1A3A6B", colorGradEnd: "#2563EB", daysFromNow: 2, scheduledDate: "Sat, Mar 1", scheduledDay: "Sat", time: "09:00", ampm: "AM", note: "Take on empty stomach", frequency: "Once in Day", category: "Blood Pressure", sideEffect: "Avoid grapefruit", refillLeft: 10, refillTotal: 30, reminderSet: true, streak: 30, countdown: "In 2 days" },
-  { id: 6, name: "Zinc", dose: "25mg", qty: "1 tablet", icon: "⚡", color: "#1E6B4A", colorGradStart: "#14532D", colorGradEnd: "#22C55E", daysFromNow: 3, scheduledDate: "Sun, Mar 2", scheduledDay: "Sun", time: "10:00", ampm: "AM", note: "Take after breakfast", frequency: "Once in Day", category: "Supplement", sideEffect: "Take with food", refillLeft: 45, refillTotal: 60, reminderSet: false, streak: 5, countdown: "In 3 days" },
-];
-
+const BASE = "https://localhost:7205";
 const UPCOMING_TABS = ["All", "Today", "Tomorrow", "This Week"];
+
+const formatTime = (time) => {
+  if (!time) return { time: "--:--", ampm: "" };
+  const date = new Date(`1970-01-01T${time}`);
+  const h = date.getHours(), m = date.getMinutes();
+  return {
+    time: `${String(h % 12 || 12).padStart(2, "0")}:${String(m).padStart(2, "0")}`,
+    ampm: h >= 12 ? "PM" : "AM"
+  };
+};
+
+const formatDate = (d) => {
+  if (!d) return "N/A";
+  return new Date(d).toLocaleDateString("en-IN", {
+    day: "numeric", month: "short", year: "numeric"
+  });
+};
+
+const toMedCard = (m, targetDate) => {
+  const t = formatTime(m.doseTime);
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const tgt = new Date(targetDate); tgt.setHours(0, 0, 0, 0);
+  const diffDays = Math.round((tgt - today) / 86400000);
+
+  return {
+    id: Number(m.id),
+    name: m.medicineName,
+    dose: `${m.dosage} ${m.dosageUnit}`,
+    qty: m.medicineForm || "1 tablet",
+    icon: "💊",
+    color: "#2563EB",
+    category: m.medicineForm,
+    refillLeft: m.stockQuantity || 10,
+    refillTotal: 30,
+    time: t.time,
+    ampm: t.ampm,
+    note: m.notes,
+    doctor: m.prescribedBy,
+    meal: m.mealTiming,
+    frequency: m.frequencyType,
+    priority: m.priorityLevel,
+    startDate: formatDate(m.startDate),
+    endDate: formatDate(m.endDate),
+    status: m.dayStatus || "pending",
+    countdown: diffDays === 0 ? "Due today"
+      : diffDays === 1 ? "In 1 day"
+        : `In ${diffDays} days`,
+    reminderSet: m.isReminderOn || false,
+    daysFromNow: diffDays,
+    scheduledDate: tgt.toLocaleDateString("en-IN", {
+      weekday: "short", day: "numeric", month: "short"
+    }),
+    scheduledDay: tgt.toLocaleDateString("en-US", { weekday: "short" }),
+  };
+};
+
+// Build the 7-day strip starting from today
+const buildWeekDays = () => {
+  const days = [];
+  const today = new Date();
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() + i);
+    days.push({
+      date: d,
+      dateStr: d.toISOString().split("T")[0],
+      abbr: d.toLocaleDateString("en-US", { weekday: "short" }).toUpperCase(),
+      num: d.getDate(),
+      month: i >= 1 ? d.toLocaleDateString("en-US", { month: "short" }) : "",
+      isToday: i === 0,
+    });
+  }
+  return days;
+};
+
+function CalendarStrip({ selectedDateStr, onSelect }) {
+  const weekDays = buildWeekDays();
+  return (
+    <div className="cal-strip">
+      {weekDays.map((d) => (
+        <button
+          key={d.dateStr}
+          className={`cal-day ${d.isToday ? "today" : ""} ${selectedDateStr === d.dateStr ? "selected" : ""}`}
+          onClick={() => onSelect(selectedDateStr === d.dateStr ? null : d.dateStr)}
+        >
+          <span className="cal-day-name">{d.abbr}</span>
+          <span className="cal-day-num">{d.num}</span>
+          {d.month && <span className="cal-month">{d.month}</span>}
+        </button>
+      ))}
+    </div>
+  );
+}
 
 function groupByDate(items) {
   const map = {};
@@ -25,58 +111,84 @@ function groupByDate(items) {
   return map;
 }
 
-function CalendarStrip({ selectedDay, onSelect }) {
-  const days   = ["Thu", "Fri", "Sat", "Sun", "Mon", "Tue", "Wed"];
-  const dates  = [27, 28, 1, 2, 3, 4, 5];
-  const months = ["", "", "Mar", "Mar", "Mar", "Mar", "Mar"];
-  return (
-    <div className="cal-strip">
-      {days.map((d, i) => (
-        <button key={d}
-          className={`cal-day ${selectedDay === d ? "selected" : ""} ${d === "Thu" ? "today" : ""}`}
-          onClick={() => onSelect(selectedDay === d ? null : d)}>
-          <span className="cal-day-name">{d}</span>
-          <span className="cal-day-num">{dates[i]}</span>
-          {months[i] && <span className="cal-month">{months[i]}</span>}
-        </button>
-      ))}
-    </div>
-  );
-}
-
 export default function Upcoming() {
-  const navigate = useNavigate();                          // ← ADDED
+  const navigate = useNavigate();
+  const todayStr = new Date().toISOString().split("T")[0];
+
   const [activeFilter, setActiveFilter] = useState("All");
-  const [selectedDay, setSelectedDay]   = useState(null);
-  const [meds, setMeds]                 = useState(
-    upcomingSchedule.map(m => ({ ...m, status: "pending" }))
-  );
+  // selectedDateStr: which single day is highlighted (null = show week based on filter)
+  const [selectedDateStr, setSelectedDateStr] = useState(null);
+  const [meds, setMeds] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleTake = id =>
-    setMeds(prev => prev.map(m => m.id === id ? { ...m, status: "taken", countdown: "Just taken" } : m));
+  // Fetch whenever filter or selectedDate changes
+  useEffect(() => {
+    if (selectedDateStr) {
+      fetchForDate(selectedDateStr);
+    } else {
+      fetchWeek();
+    }
+  }, [selectedDateStr, activeFilter]);
 
-  const handleSkip = (id, undo = false) =>
-    setMeds(prev => prev.map(m =>
-      m.id === id
-        ? undo
-          ? { ...m, status: "pending", countdown: m.daysFromNow === 0 ? "Due today" : `In ${m.daysFromNow} day${m.daysFromNow > 1 ? "s" : ""}` }
-          : { ...m, status: "skipped", countdown: "Skipped" }
-        : m
-    ));
+  const fetchForDate = async (dateStr) => {
+    try {
+      setLoading(true);
+      const userId = parseInt(localStorage.getItem("userId"));
+      if (!userId) return;
+      const res = await axios.get(`${BASE}/api/medicine/upcoming/${userId}?date=${dateStr}`);
+      setMeds(res.data.map(m => toMedCard(m, dateStr)));
+    } catch (err) {
+      console.error(err);
+    } finally { setLoading(false); }
+  };
 
+  const fetchWeek = async () => {
+    try {
+      setLoading(true);
+      const userId = parseInt(localStorage.getItem("userId"));
+      if (!userId) return;
+      const today = new Date();
+
+      // Determine how many days to fetch based on filter
+      const days = activeFilter === "Today" ? [0]
+        : activeFilter === "Tomorrow" ? [1]
+          : [0, 1, 2, 3, 4, 5, 6]; // This Week / All
+
+      const promises = days.map(i => {
+        const d = new Date(today); d.setDate(today.getDate() + i);
+        const dStr = d.toISOString().split("T")[0];
+        return axios.get(`${BASE}/api/medicine/upcoming/${userId}?date=${dStr}`)
+          .then(r => r.data.map(m => toMedCard(m, dStr)));
+      });
+
+      const results = await Promise.all(promises);
+      setMeds(results.flat());
+    } catch (err) {
+      console.error(err);
+    } finally { setLoading(false); }
+  };
+
+  const handleToggleReminder = async (id) => {
+    const med = meds.find(m => m.id === id);
+    const newVal = !med.reminderSet;
+    try {
+      await axios.put(`${BASE}/api/medicine/reminder/${id}`, { isReminderOn: newVal });
+      setMeds(prev => prev.map(m => m.id === id ? { ...m, reminderSet: newVal } : m));
+    } catch (err) { console.error(err); }
+  };
+
+  // Local filter on top of fetched data
   const filtered = meds.filter(m => {
-    if (selectedDay) return m.scheduledDay === selectedDay;
-    if (activeFilter === "Today")     return m.daysFromNow === 0;
-    if (activeFilter === "Tomorrow")  return m.daysFromNow === 1;
-    if (activeFilter === "This Week") return m.daysFromNow <= 6;
+    if (activeFilter === "Today") return m.daysFromNow === 0;
+    if (activeFilter === "Tomorrow") return m.daysFromNow === 1;
     return true;
   });
 
-  const grouped       = groupByDate(filtered);
-  const totalCount    = meds.length;
-  const todayCount    = meds.filter(m => m.daysFromNow === 0).length;
+  const grouped = groupByDate(filtered);
+  const totalCount = meds.length;
+  const todayCount = meds.filter(m => m.daysFromNow === 0).length;
   const tomorrowCount = meds.filter(m => m.daysFromNow === 1).length;
-  const remindersOn   = meds.filter(m => m.reminderSet).length;
+  const remindersOn = meds.filter(m => m.reminderSet).length;
 
   return (
     <Layout>
@@ -86,7 +198,11 @@ export default function Upcoming() {
             <h1>Upcoming Medicines 🗓️</h1>
             <p>{totalCount} doses scheduled for the next 7 days</p>
           </div>
-          <div className="date-chip">📅 <b>Thursday</b>, Feb 27</div>
+          <div className="date-chip">
+            📅 <b>{new Date().toLocaleDateString("en-IN", {
+              weekday: "long", day: "numeric", month: "short"
+            })}</b>
+          </div>
         </div>
 
         <div className="stats-row">
@@ -118,12 +234,7 @@ export default function Upcoming() {
               <div className="stat-value">{remindersOn}</div>
             </div>
           </div>
-
-          {/* ── Add Medicine button → navigates to /addMedicine ── */}
-          <button
-            className="add-btn"
-            onClick={() => navigate("/addMedicine")}    // ← ADDED
-          >
+          <button className="add-btn" onClick={() => navigate("/addMedicine")}>
             <div className="add-btn-label">Add<br />Medicine</div>
             <div className="add-btn-circle">+</div>
           </button>
@@ -132,13 +243,16 @@ export default function Upcoming() {
         <div className="cal-section">
           <div className="cal-section-header">
             <span className="cal-title">Jump to Day</span>
-            {selectedDay && (
-              <button className="cal-clear" onClick={() => setSelectedDay(null)}>
+            {selectedDateStr && (
+              <button className="cal-clear" onClick={() => setSelectedDateStr(null)}>
                 Clear filter ✕
               </button>
             )}
           </div>
-          <CalendarStrip selectedDay={selectedDay} onSelect={setSelectedDay} />
+          <CalendarStrip
+            selectedDateStr={selectedDateStr}
+            onSelect={setSelectedDateStr}
+          />
         </div>
 
         <div className="list-head">
@@ -146,22 +260,44 @@ export default function Upcoming() {
           <FilterTabs
             tabs={UPCOMING_TABS}
             active={activeFilter}
-            onChange={f => { setActiveFilter(f); setSelectedDay(null); }}
+            onChange={f => { setActiveFilter(f); setSelectedDateStr(null); }}
           />
         </div>
 
         <div className="cards-container">
-          {Object.keys(grouped).length === 0
-            ? <div className="empty-state">No medicines scheduled for this period</div>
-            : Object.entries(grouped).map(([dateLabel, items]) => (
-                <div key={dateLabel} className="date-group">
-                  <div className="date-group-label">📅 {dateLabel}</div>
-                  {items.map(med =>
-                    <MedCard key={med.id} med={med} onTake={handleTake} onSkip={handleSkip} />
-                  )}
+          {loading ? (
+            <div className="empty-state">Loading...</div>
+          ) : Object.keys(grouped).length === 0 ? (
+            <div className="empty-state">No medicines scheduled for this period</div>
+          ) : (
+            Object.entries(grouped).map(([dateLabel, items]) => (
+              <div key={dateLabel} className="date-group">
+                <div className="date-group-label">
+                  <span className="dg-icon">📅</span>
+
+                  <span className="dg-text">
+                    {dateLabel}
+                  </span>
+
+                  {/* optional badge (you can remove if not needed) */}
+                  <span className="dg-badge">
+                    {items.length} doses
+                  </span>
+
+                  <div className="dg-line" />
                 </div>
-              ))
-          }
+                {items.map(med => (
+                  <MedCard
+                    key={`${med.id}-${dateLabel}`}
+                    med={med}
+                    onTake={() => { }}
+                    onSkip={() => { }}
+                    onToggleReminder={handleToggleReminder}
+                  />
+                ))}
+              </div>
+            ))
+          )}
         </div>
       </div>
     </Layout>

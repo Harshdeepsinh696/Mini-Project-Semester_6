@@ -10,10 +10,13 @@ html, body { height: 100%; overflow: hidden; }
 .cards-container::-webkit-scrollbar-thumb { background: rgba(37,99,235,0.4); border-radius: 10px; }
 .cards-container::-webkit-scrollbar-thumb:hover { background: rgba(37,99,235,0.7); }
 .cards-container {
-  flex: 1; overflow-y: auto; padding-right: 6px;
-  scroll-behavior: smooth; -webkit-overflow-scrolling: touch;
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 6px;
+
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
-  mask-image: linear-gradient(to bottom, transparent 0px, black 16px, black calc(100% - 16px), transparent 100%);
 }
 
 /* ── MAIN LAYOUT ── */
@@ -205,8 +208,83 @@ html, body { height: 100%; overflow: hidden; }
   text-align: center; color: #7A8FB5;
   font-size: 14px; font-weight: 500; padding: 32px;
 }
-.date-group { margin-bottom: 4px; }
+.date-group {
+  position: relative;
+  padding-top: 6px;
+}
 
+/* 🔥 SAME AS HISTORY FULL BAR */
+.date-group-label {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  margin: 10px 0 8px;
+  padding: 10px 14px;
+
+  border-radius: 14px;
+
+  background: #EAF2FF;
+
+  border: 1.5px solid #BFDBFE;
+
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.12);
+}
+
+/* icon */
+.dg-icon {
+  position: relative;
+  z-index: 1;
+  font-size: 14px;
+}
+
+/* text */
+.dg-text {
+  position: relative;
+  z-index: 1;
+  font-size: 13px;
+  font-weight: 800;
+  color: #1A3A6B;
+}
+
+/* badge like history */
+.dg-badge {
+  position: relative;
+  z-index: 1;
+  font-size: 10px;
+  font-weight: 800;
+
+  border-radius: 20px;
+  padding: 2px 10px;
+  margin-left: 4px;
+
+  background: #FEF3C7;
+  color: #B45309;
+  border: 1.5px solid #FCD34D;
+
+  white-space: nowrap;
+}
+
+/* line */
+.dg-line {
+  position: absolute;
+
+  left: 10%;
+  right: 10%;
+
+  top: 50%;                /* 🔥 move to center */
+  transform: translateY(-50%); /* 🔥 exact vertical center */
+
+  height: 1.5px;
+  background: linear-gradient(90deg, #D1DEFF, transparent);
+
+  z-index: 0; /* keep behind text */
+}
 /* ── UPCOMING CARD ── */
 .up-card {
   background: #fff; border-radius: 22px; margin: 8px 0;

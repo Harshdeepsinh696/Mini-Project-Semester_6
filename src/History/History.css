@@ -451,7 +451,6 @@
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
-  mask-image: linear-gradient(to bottom, transparent 0px, black 16px, black calc(100% - 16px), transparent 100%);
 }
 
 .hist-cards::-webkit-scrollbar { width: 5px; }
@@ -460,25 +459,43 @@
 .hist-cards::-webkit-scrollbar-thumb:hover { background: rgba(37,99,235,0.6); }
 
 /* Date group */
-.hist-date-group { margin-bottom: 6px; }
+.hist-date-group { margin-bottom: 6px;position: relative; padding-top: 6px; }
 
 .hist-dg-label {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin: 6px 0 8px;
-  padding: 0 2px;
+  justify-content: center;
+  gap: 10px;
+
+  margin: 10px 0 8px;
+  padding: 10px 14px;
+
+  border-radius: 14px;
+
+  background: #EAF2FF;   /* 🔥 SAME AS UPCOMING */
+  border: 1.5px solid #BFDBFE;
+
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.12);
 }
 
-.hist-dg-icon { font-size: 14px; }
+
+.hist-dg-icon { position: relative; z-index: 1;font-size: 14px; }
 
 .hist-dg-text {
+  position: relative;
+  z-index: 1;
   font-size: 13px;
   font-weight: 700;
   color: #1A3A6B;
 }
 
 .hist-dg-badge {
+  position: relative;
+  z-index: 1;
   font-size: 10px;
   font-weight: 800;
   border-radius: 20px;
@@ -490,9 +507,18 @@
 .hist-dg-badge.b-red   { background: #FEE2E2; color: #DC2626; border: 1.5px solid #FCA5A5; }
 
 .hist-dg-line {
-  flex: 1;
-  height: 1px;
+  position: absolute;
+
+  left: 10%;
+  right: 10%;
+
+  top: 50%;
+  transform: translateY(-50%);
+
+  height: 1.5px;
   background: linear-gradient(90deg, #D1DEFF, transparent);
+
+  z-index: 0;
 }
 
 /* Empty state */

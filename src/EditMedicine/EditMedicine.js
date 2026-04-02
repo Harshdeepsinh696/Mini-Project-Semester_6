@@ -1,15 +1,17 @@
 // ══════════════════════════════════════════════════════════
 //  EditMedicine.js  |  src/EditMedicine/EditMedicine.js
-//  Full edit page — matches AddMedicine features exactly:
-//  3-step wizard, live preview, same fields, same UI
+//  Full edit page — connected to backend API
 // ══════════════════════════════════════════════════════════
 import { useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
+import axios from "axios";
 import Layout from "../Layout/Layout";
 import "./EditMedicine.css";
 
-const ICONS = ["💊","🌿","🔵","❤️","🐟","⚡","💉","🧴","🧪","🫧","🌡️","🩺"];
-const COLORS = [
+const BASE_URL = "https://localhost:7205";
+
+const ICONS        = ["💊","🌿","🔵","❤️","🐟","⚡","💉","🧴","🧪","🫧","🌡️","🩺"];
+const COLORS       = [
   { hex:"#2563EB", label:"Blue"    },
   { hex:"#16A34A", label:"Green"   },
   { hex:"#DC2626", label:"Red"     },
@@ -21,20 +23,30 @@ const COLORS = [
   { hex:"#1A3A6B", label:"Navy"    },
   { hex:"#065F46", label:"Emerald" },
 ];
-const CATEGORIES  = ["Pain Relief","Diabetes","Blood Pressure","Supplement","Antibiotic","Cardiac","Thyroid","Vitamin","Antacid","Other"];
-const FORMS       = ["Tablet","Capsule","Syrup","Injection","Drops","Patch","Inhaler","Cream","Powder"];
-const FREQS       = ["Once in Day","Twice in Day","3 Times a Day","Every 6 Hours","Every 8 Hours","Weekly","As Needed"];
-const MEALS       = ["Before Meal","After Meal","With Meal","Empty Stomach","No Restriction"];
-const DAYS        = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
-const SIDE_EFFECTS= ["Take with water","Avoid alcohol","Avoid grapefruit","Store in fridge","Take with food","Avoid driving","Monitor BP","Keep from sunlight","Take on full stomach","No dairy"];
-const PRIORITIES  = ["Critical","High","Medium","Low"];
-const TIME_SLOTS  = ["06:00 AM","08:00 AM","10:00 AM","12:00 PM","02:00 PM","04:00 PM","06:00 PM","08:00 PM","10:00 PM"];
+const CATEGORIES   = ["Pain Relief","Diabetes","Blood Pressure","Supplement","Antibiotic","Cardiac","Thyroid","Vitamin","Antacid","Other"];
+const FORMS        = ["Tablet","Capsule","Syrup","Injection","Drops","Patch","Inhaler","Cream","Powder"];
+const FREQS        = ["Once in Day","Twice in Day","3 Times a Day","Every 6 Hours","Every 8 Hours","Weekly","As Needed"];
+const MEALS        = ["Before Meal","After Meal","With Meal","Empty Stomach","No Restriction"];
+const DAYS         = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+const SIDE_EFFECTS = ["Take with water","Avoid alcohol","Avoid grapefruit","Store in fridge","Take with food","Avoid driving","Monitor BP","Keep from sunlight","Take on full stomach","No dairy"];
+const PRIORITIES   = ["Critical","High","Medium","Low"];
+const TIME_SLOTS   = ["06:00 AM","08:00 AM","10:00 AM","12:00 PM","02:00 PM","04:00 PM","06:00 PM","08:00 PM","10:00 PM"];
 
 const STEPS = [
   { n:1, lbl:"Step 1", name:"Basic Info"    },
   { n:2, lbl:"Step 2", name:"Schedule"      },
   { n:3, lbl:"Step 3", name:"Stock & Alerts"},
 ];
+
+// ── Utility: "08:00 AM" → "08:00:00" ──
+const convertTo24 = (timeStr) => {
+  if (!timeStr) return "08:00:00";
+  const [time, ampm] = timeStr.trim().split(" ");
+  let [h, m] = time.split(":").map(Number);
+  if (ampm === "PM" && h !== 12) h += 12;
+  if (ampm === "AM" && h === 12) h = 0;
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:00`;
+};
 
 /* ── Step bar ── */
 function StepsBar({ step }) {
@@ -167,45 +179,46 @@ function Summary({ f }) {
    MAIN
 ══════════════════════════════════════════════════════════ */
 export default function EditMedicine() {
-  const navigate = useNavigate();
-  const { id }   = useParams();
-  const location = useLocation();
+  const navigate  = useNavigate();
+  const { id }    = useParams();
+  const location  = useLocation();
 
   const prefill = location.state?.med || {};
 
-  const [step,   setStep]   = useState(1);
-  const [saving, setSaving] = useState(false);
-  const [saved,  setSaved]  = useState(false);
-  const [errors, setErrors] = useState({});
+  const [step,      setStep]      = useState(1);
+  const [saving,    setSaving]    = useState(false);
+  const [saved,     setSaved]     = useState(false);
+  const [deleting,  setDeleting]  = useState(false);
+  const [errors,    setErrors]    = useState({});
 
   const [f, setF] = useState({
-    name:           prefill.name          || "",
-    icon:           prefill.icon          || "💊",
-    color:          prefill.color         || "#2563EB",
-    category:       prefill.category      || "Pain Relief",
-    form:           prefill.form          || "Tablet",
-    dose:           prefill.dose          || "",
-    doseUnit:       prefill.doseUnit       || "mg",
-    qty:            prefill.qty           || "",
-    doctor:         prefill.doctor        || "",
-    note:           prefill.note          || "",
-    sideEffects:    prefill.sideEffects   || [],
-    frequency:      prefill.frequency     || "",
-    days:           prefill.days          || [...DAYS],
-    times:          prefill.times         || [],
-    meal:           prefill.meal          || "",
-    startDate:      prefill.startDate     || "",
-    endDate:        prefill.endDate       || "",
-    refillLeft:     prefill.refillLeft    || "",
-    refillTotal:    prefill.refillTotal   || "",
-    lowAt:          prefill.lowAt         || "7",
-    pharmacy:       prefill.pharmacy      || "",
-    expiry:         prefill.expiry        || "",
-    reminders:      prefill.reminders     ?? true,
-    missedAlert:    prefill.missedAlert   ?? true,
-    lowStock:       prefill.lowStock      ?? true,
+    name:           prefill.name           || "",
+    icon:           prefill.icon           || "💊",
+    color:          prefill.color          || "#2563EB",
+    category:       prefill.category       || "Pain Relief",
+    form:           prefill.form           || "Tablet",
+    dose:           prefill.dose           || "",
+    doseUnit:       prefill.doseUnit        || "mg",
+    qty:            prefill.qty            || "",
+    doctor:         prefill.doctor         || "",
+    note:           prefill.note           || "",
+    sideEffects:    prefill.sideEffects    || [],
+    frequency:      prefill.frequency      || "",
+    days:           prefill.days           || [...DAYS],
+    times:          prefill.times          || [],
+    meal:           prefill.meal           || "",
+    startDate:      prefill.startDate      || "",
+    endDate:        prefill.endDate        || "",
+    refillLeft:     prefill.refillLeft     || "",
+    refillTotal:    prefill.refillTotal    || "",
+    lowAt:          prefill.lowAt          || "7",
+    pharmacy:       prefill.pharmacy       || "",
+    expiry:         prefill.expiry         || "",
+    reminders:      prefill.reminders      ?? true,
+    missedAlert:    prefill.missedAlert    ?? true,
+    lowStock:       prefill.lowStock       ?? true,
     refillReminder: prefill.refillReminder ?? true,
-    priority:       prefill.priority      || "High",
+    priority:       prefill.priority       || "High",
   });
 
   const set = (k, v) => setF(p => ({ ...p, [k]: v }));
@@ -214,6 +227,7 @@ export default function EditMedicine() {
     [k]: p[k].includes(v) ? p[k].filter(x => x !== v) : [...p[k], v],
   }));
 
+  // ── Validation ──
   const validate = () => {
     const e = {};
     if (!f.name.trim())  e.name = "Medicine name is required";
@@ -223,12 +237,98 @@ export default function EditMedicine() {
     return Object.keys(e).length === 0;
   };
 
+  // ══════════════════════════════════════
+  // SAVE — PUT api/medicine/update/{id}
+  // ══════════════════════════════════════
   const handleSave = async () => {
     if (!validate()) { setStep(1); return; }
     setSaving(true);
-    await new Promise(r => setTimeout(r, 1000));
-    setSaving(false); setSaved(true);
-    setTimeout(() => navigate("/today"), 1200);
+    setErrors({});
+
+    try {
+      const userId = parseInt(localStorage.getItem("userId"));
+
+      const payload = {
+        userId:          userId,
+        medicineName:    f.name,
+        medicineForm:    f.form,
+        dosage:          parseFloat(f.dose),
+        dosageUnit:      f.doseUnit,
+        quantityPerDose: f.qty       || "",
+        stockQuantity:   parseInt(f.refillLeft)  || 0,
+        prescribedBy:    f.doctor    || "",
+        notes:           f.note      || "",
+
+        schedule: {
+          mealTiming: f.meal      || "",
+          startDate:  f.startDate || new Date().toISOString().split("T")[0],
+          endDate:    f.endDate   || null,
+        },
+
+        frequency: {
+          frequencyType: f.frequency || "Once in Day",
+          monday:    f.days.includes("Mon"),
+          tuesday:   f.days.includes("Tue"),
+          wednesday: f.days.includes("Wed"),
+          thursday:  f.days.includes("Thu"),
+          friday:    f.days.includes("Fri"),
+          saturday:  f.days.includes("Sat"),
+          sunday:    f.days.includes("Sun"),
+        },
+
+        // ✅ Convert "08:00 AM" → "08:00:00" for SQL TIME column
+        doseTimes: (f.times || []).map(convertTo24),
+
+        alerts: {
+          doseReminder:    f.reminders,
+          missedDoseAlert: f.missedAlert,
+          lowStockWarning: f.lowStock,
+          refillReminder:  f.refillReminder,
+          priorityLevel:   f.priority,
+        },
+      };
+
+      const res = await axios.put(
+        `${BASE_URL}/api/medicine/update/${id}`,
+        payload
+      );
+
+      if (res.status === 200) {
+        setSaved(true);
+        setTimeout(() => navigate("/today"), 1200);
+      }
+
+    } catch (err) {
+      console.error("Update error:", err);
+      const msg = err.response?.data?.message || "Failed to save changes. Please try again.";
+      setErrors({ submit: `❌ ${msg}` });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // ══════════════════════════════════════
+  // DELETE — DELETE api/medicine/delete/{id}
+  // ══════════════════════════════════════
+  const handleDelete = async () => {
+    if (!window.confirm(`Delete "${f.name}"?\n\nThis will permanently remove this medicine from your schedule.`)) return;
+
+    setDeleting(true);
+
+    try {
+      const res = await axios.delete(`${BASE_URL}/api/medicine/delete/${id}`);
+
+      if (res.status === 200) {
+        navigate("/today");
+      }
+
+    } catch (err) {
+      console.error("Delete error:", err);
+      const msg = err.response?.data?.message || "Failed to delete medicine. Please try again.";
+      alert(`❌ ${msg}`);
+    } finally {
+      setDeleting(false);
+    }
   };
 
   const handleDiscard = () => navigate(-1);
@@ -434,10 +534,10 @@ export default function EditMedicine() {
                     onChange={e => {
                       if (!e.target.value) return;
                       const [h,m] = e.target.value.split(":");
-                      const hr   = parseInt(h);
-                      const ampm = hr >= 12 ? "PM" : "AM";
-                      const hr12 = hr > 12 ? hr-12 : hr===0 ? 12 : hr;
-                      const lbl  = `${String(hr12).padStart(2,"0")}:${m} ${ampm}`;
+                      const hr    = parseInt(h);
+                      const ampm  = hr >= 12 ? "PM" : "AM";
+                      const hr12  = hr > 12 ? hr-12 : hr===0 ? 12 : hr;
+                      const lbl   = `${String(hr12).padStart(2,"0")}:${m} ${ampm}`;
                       if (!f.times?.includes(lbl)) tog("times",lbl);
                     }} />
                 </div>
@@ -533,10 +633,10 @@ export default function EditMedicine() {
                 </div>
                 <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
                   {[
-                    { k:"reminders",       ico:"🔔", name:"Dose Reminders",    desc:"Notify at each scheduled dose time" },
-                    { k:"missedAlert",     ico:"⚠️", name:"Missed Dose Alert", desc:"Alert when a dose is not recorded" },
-                    { k:"lowStock",        ico:"📦", name:"Low Stock Warning",  desc:"Warn when pills fall below threshold" },
-                    { k:"refillReminder",  ico:"🔄", name:"Refill Reminder",    desc:"Remind to buy more before running out" },
+                    { k:"reminders",      ico:"🔔", name:"Dose Reminders",    desc:"Notify at each scheduled dose time" },
+                    { k:"missedAlert",    ico:"⚠️", name:"Missed Dose Alert", desc:"Alert when a dose is not recorded"  },
+                    { k:"lowStock",       ico:"📦", name:"Low Stock Warning",  desc:"Warn when pills fall below threshold"},
+                    { k:"refillReminder", ico:"🔄", name:"Refill Reminder",    desc:"Remind to buy more before running out"},
                   ].map(({ k, ico, name, desc }) => (
                     <div key={k} className="am-toggle-row">
                       <div className="am-toggle-left">
@@ -572,25 +672,30 @@ export default function EditMedicine() {
                 </div>
               </div>
 
-              {/* Danger zone */}
+              {/* ── Danger Zone ── */}
               <div className="am-panel" style={{ background:"#FFF5F5", border:"1.5px solid #FECDD3" }}>
                 <div className="am-panel-hd">
                   <div className="am-panel-icon" style={{ background:"#FEE2E2" }}>🗑️</div>
                   <div className="am-panel-title" style={{ color:"#DC2626" }}>Danger Zone</div>
                 </div>
                 <p style={{ fontSize:13, color:"#9B1C1C", marginBottom:12, lineHeight:1.5 }}>
-                  This will permanently remove this medicine from your schedule.
+                  This will permanently remove <strong>{f.name || "this medicine"}</strong> from
+                  your schedule. This action cannot be undone.
                 </p>
                 <button
+                  disabled={deleting}
                   style={{
                     display:"inline-flex", alignItems:"center", gap:7,
-                    background:"#fff", border:"1.5px solid #FCA5A5", color:"#DC2626",
+                    background: deleting ? "#FEE2E2" : "#fff",
+                    border:"1.5px solid #FCA5A5", color:"#DC2626",
                     padding:"9px 16px", borderRadius:9, fontSize:13, fontWeight:700,
-                    cursor:"pointer", fontFamily:"'Sora',sans-serif", transition:"all 0.2s",
+                    cursor: deleting ? "not-allowed" : "pointer",
+                    fontFamily:"'Sora',sans-serif", transition:"all 0.2s",
+                    opacity: deleting ? 0.7 : 1,
                   }}
-                  onClick={() => { if (window.confirm("Delete this medicine?")) navigate("/today"); }}
+                  onClick={handleDelete}
                 >
-                  🗑️ Delete medicine
+                  {deleting ? "⏳ Deleting…" : "🗑️ Delete medicine"}
                 </button>
               </div>
 
@@ -623,14 +728,31 @@ export default function EditMedicine() {
 
         {/* ── Action bar ── */}
         <div className="am-action-bar">
+
+          {/* ✅ API error message */}
+          {errors.submit && (
+            <span style={{
+              color:"#EF4444", fontSize:12,
+              marginRight:"auto", fontWeight:600,
+            }}>
+              {errors.submit}
+            </span>
+          )}
+
           <button className="am-btn cancel" onClick={handleDiscard}>Cancel</button>
+
           {step > 1 && (
             <button className="am-btn back" onClick={() => setStep(s => s-1)}>← Back</button>
           )}
+
           {step < 3
             ? <button className="am-btn primary" onClick={() => setStep(s => s+1)}>Next Step →</button>
             : (
-              <button className="am-btn primary" onClick={handleSave} disabled={saving||saved}>
+              <button
+                className="am-btn primary"
+                onClick={handleSave}
+                disabled={saving || saved}
+              >
                 {saving ? "⏳ Saving…" : saved ? "✅ Saved!" : "✓ Save Changes"}
               </button>
             )

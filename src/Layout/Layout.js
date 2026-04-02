@@ -154,15 +154,6 @@ function SidebarContent({ onClose }) {
           {item.label}
         </button>
       ))}
-
-      {/* Streak */}
-      <div className="streak-box">
-        <span className="streak-fire">🔥</span>
-        <div className="streak-text">
-          <strong>7-Day Streak!</strong>
-          Keep it up, great job!
-        </div>
-      </div>
     </>
   );
 }

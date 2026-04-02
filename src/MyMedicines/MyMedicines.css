@@ -1,0 +1,211 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap');
+
+/* ── Page ── */
+.mm-page {
+  flex: 1; display: flex; flex-direction: column;
+  padding: 28px 32px; gap: 16px; overflow: hidden;
+  font-family: 'Sora', sans-serif;
+  background: linear-gradient(140deg, #EFF6FF 0%, #F0FDF4 100%);
+}
+
+/* ── Header ── */
+.mm-header {
+  display: flex; justify-content: space-between;
+  align-items: center; flex-wrap: wrap; gap: 10px; flex-shrink: 0;
+}
+.mm-header-left { display: flex; align-items: center; gap: 12px; }
+.mm-back {
+  width: 36px; height: 36px; border-radius: 11px;
+  background: #fff; border: 1.5px solid #D1DEFF;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: #1A3A6B; font-size: 16px; font-weight: 700;
+  transition: all .18s;
+}
+.mm-back:hover { background: #EFF6FF; border-color: #93C5FD; transform: translateX(-2px); }
+.mm-title { font-size: 20px; font-weight: 800; color: #1A3A6B; }
+.mm-sub   { font-size: 12px; color: #7A8FB5; margin-top: 2px; }
+
+.mm-add-btn {
+  padding: 10px 20px; border-radius: 12px;
+  background: linear-gradient(135deg, #1A3A6B, #2563EB);
+  border: none; color: #fff; font-family: 'Sora', sans-serif;
+  font-size: 13px; font-weight: 700; cursor: pointer;
+  box-shadow: 0 3px 14px rgba(37,99,235,.3);
+  transition: all .18s;
+}
+.mm-add-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 22px rgba(37,99,235,.4); }
+
+/* ── Stats ── */
+.mm-stats {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 10px; flex-shrink: 0;
+}
+.mm-stat {
+  border-radius: 14px; padding: 12px 16px;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  border: 1.5px solid transparent;
+}
+.mm-stat--total    { background: #EFF6FF; border-color: #BFDBFE; }
+.mm-stat--critical { background: #FEF2F2; border-color: #FCA5A5; }
+.mm-stat--reminder { background: #F0FDF4; border-color: #86EFAC; }
+.mm-stat--linked   { background: #FFFBEB; border-color: #FCD34D; }
+.mm-stat-icon { font-size: 18px; }
+.mm-stat-val  { font-size: 22px; font-weight: 800; color: #1A3A6B; line-height: 1; }
+.mm-stat-lbl  { font-size: 10px; font-weight: 700; color: #7A8FB5; text-transform: uppercase; letter-spacing: .6px; }
+
+/* ── Toolbar ── */
+.mm-toolbar {
+  display: flex; align-items: center; gap: 12px;
+  flex-wrap: wrap; flex-shrink: 0;
+}
+.mm-search-wrap {
+  flex: 1; min-width: 200px; position: relative;
+  display: flex; align-items: center;
+}
+.mm-search-icon {
+  position: absolute; left: 12px; font-size: 14px; pointer-events: none;
+}
+.mm-search {
+  width: 100%; padding: 9px 36px 9px 36px;
+  border: 1.5px solid #D1DEFF; border-radius: 11px;
+  font-family: 'Sora', sans-serif; font-size: 13px; color: #1A3A6B;
+  background: #fff; outline: none; transition: all .2s;
+}
+.mm-search:focus { border-color: #2563EB; box-shadow: 0 0 0 3px rgba(37,99,235,.09); }
+.mm-search::placeholder { color: #B0BBDA; }
+.mm-search-clear {
+  position: absolute; right: 10px; background: none; border: none;
+  font-size: 12px; color: #9096B0; cursor: pointer; padding: 4px;
+}
+.mm-filters { display: flex; gap: 6px; flex-wrap: wrap; }
+.mm-filter-btn {
+  padding: 7px 14px; border-radius: 20px; font-family: 'Sora', sans-serif;
+  font-size: 11px; font-weight: 700; border: 1.5px solid #D1DEFF;
+  background: #F5F8FF; color: #7A8FB5; cursor: pointer; transition: all .18s;
+}
+.mm-filter-btn:hover { border-color: #93C5FD; color: #2563EB; background: #EEF6FF; }
+.mm-filter-btn.on {
+  background: linear-gradient(135deg, #1A3A6B, #2563EB);
+  color: #fff; border-color: #1A3A6B;
+  box-shadow: 0 3px 10px rgba(37,99,235,.25);
+}
+
+/* ── List ── */
+.mm-list {
+  flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;
+  padding-right: 4px; padding-bottom: 20px;
+}
+.mm-list::-webkit-scrollbar { width: 5px; }
+.mm-list::-webkit-scrollbar-thumb { background: rgba(37,99,235,.25); border-radius: 5px; }
+
+/* ── Row ── */
+.mm-row {
+  background: #fff; border-radius: 18px;
+  border: 1.5px solid #D8E8FF;
+  box-shadow: 0 2px 12px rgba(26,58,107,.07);
+  overflow: visible; transition: all .25s cubic-bezier(.22,1,.36,1);
+}
+.mm-row:hover { box-shadow: 0 6px 22px rgba(26,58,107,.12); border-color: #BFDBFE; }
+.mm-row--open { border-color: #93C5FD; }
+
+.mm-row-main {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px 16px 16px 20px; cursor: pointer; position: relative;
+  min-height: 72px;
+  flex-wrap: nowrap;
+  overflow: visible;
+}
+.mm-accent {
+  position: absolute; left: 0; top: 10%; bottom: 10%;
+  width: 4px; border-radius: 0 4px 4px 0;
+}
+.mm-icon-box {
+  width: 42px; height: 42px; border-radius: 12px;
+  background: linear-gradient(135deg, #EFF6FF, #DBEAFE);
+  border: 1.5px solid #BFDBFE;
+  display: flex; align-items: center; justify-content: center; font-size: 20px;
+  flex-shrink: 0;
+}
+.mm-info { flex: 1; min-width: 0; overflow: visible; }
+.mm-name { font-size: 14px; font-weight: 800; color: #1A3A6B; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mm-sub  { margin-top: 6px; display: flex; flex-wrap: wrap; min-height: 22px; }
+.mm-disease-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 700;
+  padding: 3px 10px; border-radius: 20px;
+  background: linear-gradient(135deg, #FFFBEB, #FEF3C7);
+  color: #B45309; border: 1.5px solid #FCD34D;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: visible;
+}
+.mm-disease-tag--none {
+  background: #F5F8FF; color: #B0BBDA; border-color: #E0EAFF;
+  white-space: nowrap;
+}
+.mm-dose-col { text-align: center; flex-shrink: 0; }
+.mm-dose-val { font-size: 14px; font-weight: 800; color: #1A3A6B; }
+.mm-dose-lbl { font-size: 10px; color: #9096B0; font-weight: 600; text-transform: uppercase; }
+.mm-time-col { flex-shrink: 0; }
+.mm-time-badge {
+  padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700;
+  background: #EFF6FF; color: #2563EB; border: 1.5px solid #BFDBFE;
+}
+.mm-time-badge--none { background: #F5F8FF; color: #B0BBDA; border-color: #E0EAFF; }
+.mm-priority-badge {
+  padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 800;
+  border: 1.5px solid; flex-shrink: 0;
+}
+.mm-reminder { font-size: 16px; flex-shrink: 0; opacity: .5; }
+.mm-reminder.on { opacity: 1; }
+.mm-chevron {
+  font-size: 18px; color: #9096B0; transition: transform .25s; flex-shrink: 0;
+}
+.mm-chevron.open { transform: rotate(90deg); color: #2563EB; }
+
+/* ── Expanded detail ── */
+.mm-detail {
+  border-top: 1.5px solid #E8F0FF;
+  padding: 14px 20px 14px 24px;
+  background: linear-gradient(135deg, #F8FAFF, #EFF6FF);
+  animation: detailIn .22s ease both;
+}
+@keyframes detailIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:none; } }
+
+.mm-detail-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 10px; margin-bottom: 12px;
+}
+.mm-detail-item { display: flex; flex-direction: column; gap: 3px; }
+.mm-dl { font-size: 10px; font-weight: 700; color: #7A8FB5; text-transform: uppercase; letter-spacing: .5px; }
+.mm-dv { font-size: 13px; font-weight: 600; color: #1A3A6B; }
+.mm-detail-actions { display: flex; justify-content: flex-end; }
+.mm-del-btn {
+  padding: 7px 16px; border-radius: 9px; font-family: 'Sora', sans-serif;
+  font-size: 12px; font-weight: 700; cursor: pointer;
+  background: #FEF2F2; border: 1.5px solid #FCA5A5; color: #DC2626;
+  transition: all .18s;
+}
+.mm-del-btn:hover { background: #FEE2E2; transform: scale(1.02); }
+
+/* ── Empty ── */
+.mm-empty {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 8px;
+  font-size: 14px; color: #7A8FB5; font-weight: 500; padding: 40px;
+}
+.mm-empty-icon { font-size: 40px; }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .mm-page { padding: 16px; }
+  .mm-stats { grid-template-columns: repeat(2, 1fr); }
+  .mm-detail-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .mm-page { padding: 12px; gap: 10px; }
+  .mm-stats { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .mm-title { font-size: 17px; }
+  .mm-row-main { padding: 12px 12px 12px 18px; gap: 8px; }
+  .mm-dose-col, .mm-time-col, .mm-priority-badge { display: none; }
+}

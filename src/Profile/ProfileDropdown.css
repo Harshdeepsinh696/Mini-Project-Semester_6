@@ -3,6 +3,82 @@
    Theme: matches sidebar navy/green
    ══════════════════════════════════════════════════════════ */
 
+/* ══════════════════════════════════════════════════════════
+   ProfilePage.css  —  ADD THESE RULES to your existing file
+   (paste at the bottom of your current ProfilePage.css)
+   ══════════════════════════════════════════════════════════ */
+
+/* Simplified root (single column) */
+.pp-root--simple {
+  overflow-y: auto;
+}
+
+/* Quick nav cards row */
+.pp-quick-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 0 20px;
+  flex-shrink: 0;
+}
+
+.pp-nav-card {
+  background: #fff;
+  border: 1.5px solid #D1DEFF;
+  border-radius: 18px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  font-family: 'Sora', sans-serif;
+  text-align: left;
+  transition: all 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 2px 12px rgba(26, 58, 107, 0.06);
+}
+.pp-nav-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(26, 58, 107, 0.13);
+  border-color: #93C5FD;
+}
+
+.pp-nav-card-icon {
+  width: 48px; height: 48px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+  border: 1.5px solid #D1DEFF;
+}
+.pp-nav-card-label {
+  font-size: 14px; font-weight: 800; color: #1A3A6B;
+}
+.pp-nav-card-sub {
+  font-size: 11px; color: #7A8FB5; margin-top: 2px; font-weight: 500;
+}
+.pp-nav-card-arrow {
+  margin-left: auto; font-size: 18px; color: #BFDBFE;
+  transition: transform 0.18s;
+}
+.pp-nav-card:hover .pp-nav-card-arrow {
+  transform: translateX(4px);
+  color: #2563EB;
+}
+
+/* Simplified content area */
+.pp-content--simple {
+  padding: 0 20px 32px;
+  overflow: visible;
+}
+
+/* ── Keep existing responsive rules intact.
+   These just add new selectors. ── */
+@media (max-width: 600px) {
+  .pp-quick-nav { grid-template-columns: 1fr; padding: 0 12px; }
+  .pp-content--simple { padding: 0 12px 24px; }
+}
+
+
+
+
 .pd-wrap {
   position: relative;
   flex-shrink: 0;
@@ -69,6 +145,9 @@
   box-shadow: 0 16px 48px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.04);
   z-index: 999;
   animation: pdIn 0.18s cubic-bezier(0.22,1,0.36,1) both;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 @keyframes pdIn {
   from { opacity: 0; transform: translateY(-8px) scale(0.97); }

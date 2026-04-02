@@ -69,6 +69,7 @@
   font-size: 10px; font-weight: 700; letter-spacing: 0.4px;
   background: #EFF6FF; border: 1.5px solid #BFDBFE; width: fit-content;
 }
+
 .med-sub { font-size: 11px; color: #7A8FB5; font-weight: 500; }
 .med-refill {
   display: flex; align-items: center; gap: 10px;
@@ -94,14 +95,125 @@
 .action-btn.undo { background: linear-gradient(135deg, #F8F9FF, #F1F5FF); border: 1.5px solid #76b2fd; color: #145bb2; flex: unset; padding: 0 14px; }
 .action-btn.undo:hover { background: linear-gradient(135deg, #EEF3FF, #E0ECFF); border: 1.5px solid #56a4fe; }
 
+/* ══════════════════════════════════════
+   ✦ PROFESSIONAL DATE RANGE — new
+══════════════════════════════════════ */
+.med-date-range {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, #F0F6FF 0%, #E8F0FE 100%);
+  border: 1.5px solid #BFDBFE;
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+/* subtle shimmer overlay */
+.med-date-range::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.9) 50%, transparent 100%);
+  pointer-events: none;
+}
+.med-date-range.done {
+  background: linear-gradient(135deg, #F4F5F9 0%, #ECEEF5 100%);
+  border-color: #D8DCF0;
+}
+
+/* Each date "block" */
+.med-date-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.mdb-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  color: #8BA4D4;
+}
+.med-date-range.done .mdb-label { color: #B0BBDA; }
+
+/* Large day number */
+.mdb-value {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+}
+.mdb-day {
+  font-size: 38px;
+  font-weight: 900;
+  letter-spacing: -2px;
+  line-height: 1;
+  background: linear-gradient(135deg, #1A3A6B 0%, #2563EB 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  transition: all 0.2s;
+}
+.med-date-range.done .mdb-day {
+  background: linear-gradient(135deg, #9096B0 0%, #B4BAD0 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.mdb-month-year {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding-bottom: 3px;
+}
+.mdb-month {
+  font-size: 13px;
+  font-weight: 800;
+  color: #1A3A6B;
+  letter-spacing: 0.2px;
+  line-height: 1.1;
+}
+.mdb-year {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #7A8FB5;
+  letter-spacing: 0.3px;
+  line-height: 1;
+}
+.med-date-range.done .mdb-month { color: #9096B0; }
+.med-date-range.done .mdb-year  { color: #B0BBDA; }
+
+.mdb-na {
+  font-size: 22px;
+  font-weight: 700;
+  color: #C8D0E8;
+}
+
+/* Separator between start and end */
+.med-date-sep {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 0 14px;
+  flex-shrink: 0;
+}
+.med-date-sep-line {
+  width: 1px;
+  flex: 1;
+  min-height: 12px;
+  background: linear-gradient(180deg, transparent, #BFDBFE 50%, transparent);
+}
+
 /* ── CENTER PANEL ── */
 .med-center { display: flex; flex-direction: column; gap: 9px; padding: 20px 22px; }
-.med-time-row { display: flex; align-items: center; gap: 8px; }
-.med-time {
-  font-size: 34px; font-weight: 800; letter-spacing: -1.5px; line-height: 1;
-  background: linear-gradient(135deg, #1A3A6B 0%, #2563EB 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-}
+
 .med-card.done    .med-time,
 .med-card.skipped .med-time {
   background: linear-gradient(135deg, #9096B0 0%, #B4BAD0 100%);
@@ -135,7 +247,7 @@
   border-radius: 8px; width: fit-content; font-size: 12px; font-weight: 600;
 }
 
-/* ── DOCTOR & INSTRUCTIONS (NEW) ── */
+/* ── DOCTOR & INSTRUCTIONS ── */
 .med-extra-info {
   display: flex; flex-direction: column; gap: 6px;
   padding: 10px 12px;
@@ -242,6 +354,12 @@
 .med-visual-bar-label { font-size: 10px; font-weight: 700; text-align: center; }
 
 /* ── RESPONSIVE ── */
-@media (min-width: 1280px) { .med-card { grid-template-columns: 200px 1fr 260px; } .med-time { font-size: 38px; } }
+@media (min-width: 1280px) { .med-card { grid-template-columns: 200px 1fr 260px; } }
 @media (max-width: 900px)  { .med-card { grid-template-columns: 160px 1fr; } .med-right { display: none; } }
-@media (max-width: 600px)  { .med-card { grid-template-columns: 1fr; } .med-left { border-right: none; border-bottom: 1.5px solid #D8E8FF; padding: 16px 16px 16px 20px; } .med-center { padding: 16px; } .med-right { display: none; } .med-time { font-size: 26px; } }
+@media (max-width: 600px)  {
+  .med-card { grid-template-columns: 1fr; }
+  .med-left { border-right: none; border-bottom: 1.5px solid #D8E8FF; padding: 16px 16px 16px 20px; }
+  .med-center { padding: 16px; }
+  .med-right { display: none; }
+  .mdb-day { font-size: 28px; }
+}

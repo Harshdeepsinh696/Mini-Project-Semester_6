@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useProfile } from "../Context/ProfileContext";
 import "./ProfileDropdown.css";
+import axios from "axios";
 
 const MENU_ITEMS = [
   {
@@ -17,11 +18,11 @@ const MENU_ITEMS = [
   },
   {
     icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>,
-    label: "My Medicines",  route: "/today",
+    label: "My Medicines",  route: "/my-medicines",
   },
   {
     icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>,
-    label: "Health Info",   route: "/profile?tab=health",
+    label: "Health Info",   route: "/health-info",
   },
   {
     icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M18.66 5.34l1.41-1.41" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>,
@@ -64,11 +65,36 @@ export default function ProfileDropdown() {
   const navigate = useNavigate();
   const ref = useRef(null);
 
+  const userId = localStorage.getItem("userId");
+
+  const [user, setUser] = useState({
+    name: "",
+    email: ""
+  });
+
   useEffect(() => {
-    const fn = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
-    document.addEventListener("mousedown", fn);
-    return () => document.removeEventListener("mousedown", fn);
-  }, []);
+    if (!userId) return;
+
+    const fetchUser = async () => {
+      try {
+        const res = await axios.get(
+          `https://localhost:7205/api/auth/user/${userId}`
+        );
+
+        const userData = res.data.user || res.data;
+
+        setUser({
+          name: userData.fullName,
+          email: userData.email
+        });
+
+      } catch (err) {
+        console.error("Error fetching user:", err);
+      }
+    };
+
+    fetchUser();
+  }, [userId]);
 
   const go = (route) => { setOpen(false); navigate(route); };
 
@@ -89,8 +115,8 @@ export default function ProfileDropdown() {
               <AvatarImg size={38} />
             </div>
             <div className="pd-header-info">
-              <div className="pd-header-name">{profile.name}</div>
-              <div className="pd-header-email">{profile.email}</div>
+              <div className="pd-header-name">{user.name}</div>
+              <div className="pd-header-email">{user.email}</div>
             </div>
           </div>
 
