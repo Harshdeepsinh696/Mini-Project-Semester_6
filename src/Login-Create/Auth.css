@@ -384,6 +384,7 @@
   font-family: var(--font);
   font-size: 0.82rem;
   color: var(--t2);
+  margin-top: 20px;
 }
 .auth-switch-link {
   background: none; border: none;

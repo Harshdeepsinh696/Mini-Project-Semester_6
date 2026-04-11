@@ -196,6 +196,15 @@ export default function ProfilePage() {
     ? Math.floor((Date.now() - new Date(localProfile.dob)) / (365.25 * 24 * 3600 * 1000))
     : "—";
 
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    return new Date(dateString).toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric"
+    });
+  };
+
   /* Save local edits back to context so name/email update in dropdown */
   const handleSave = () => {
     updateProfile({ name: localProfile.name, email: localProfile.email });
@@ -268,7 +277,15 @@ export default function ProfilePage() {
             <div className="pp-avatar-wrap">
               <div className="pp-avatar">
                 {ctxProfile.photo ? (
-                  <img src={ctxProfile.photo} alt="Profile" className="pp-avatar-img" />
+                  <img
+                    src={ctxProfile.photo}
+                    alt="Profile"
+                    className="pp-avatar-img"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "/download.png";
+                    }}
+                  />
                 ) : (
                   <svg width="44" height="44" viewBox="0 0 24 24" fill="none">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="white" strokeWidth="1.8" strokeLinecap="round" />
@@ -306,8 +323,7 @@ export default function ProfilePage() {
               <p className="pp-hero-email">{localProfile.email}</p>
               <div className="pp-hero-pills">
                 <span className="pp-hero-pill">{localProfile.gender}</span>
-                <span className="pp-hero-pill">{localProfile.age} yrs</span>
-                <span className="pp-hero-pill pp-hero-pill--green">{health.bloodGroup}</span>
+                <span className="pp-hero-pill">{age} yrs</span>
               </div>
             </div>
 
@@ -349,7 +365,7 @@ export default function ProfilePage() {
                   <Field label="Full name" value={localProfile.name} editable={editing} icon="🙍" onChange={set(setLocalProfile)("name")} />
                   <Field label="Email address" value={localProfile.email} editable={editing} icon="📧" type="email" onChange={set(setLocalProfile)("email")} />
                   <Field label="Phone number" value={localProfile.phone} editable={editing} icon="📱" type="tel" onChange={set(setLocalProfile)("phone")} />
-                  <Field label="Date of birth" value={localProfile.dob} editable={editing} icon="🎂" type="date" onChange={set(setLocalProfile)("dob")} />
+                  <Field label="Date of birth" value={editing ? localProfile.dob : formatDate(localProfile.dob)} editable={editing} icon="🎂" type="date" onChange={set(setLocalProfile)("dob")} />
                 </div>
                 <div className="pp-fields-2col">
                   <div className="pp-field">
@@ -373,7 +389,6 @@ export default function ProfilePage() {
                       </div>
                     )}
                   </div>
-                  <Field label="Blood group" value={health.bloodGroup} editable={editing} icon="🩸" onChange={set(setHealth)("bloodGroup")} />
                 </div>
                 {editing && (
                   <button className="pp-save-btn" onClick={() => {

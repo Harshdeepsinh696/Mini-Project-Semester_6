@@ -1,17 +1,32 @@
-// ══════════════════════════════════════════════════════════
-//  ProfileContext.js  |  src/Context/ProfileContext.js
-//  Shares profile photo + name across Layout, Dropdown, Page
-// ══════════════════════════════════════════════════════════
-import { createContext, useContext, useState } from "react";
+// src/Context/ProfileContext.js
+import { createContext, useContext, useState, useEffect } from "react";
+import axios from "axios";
 
 const ProfileContext = createContext(null);
 
 export function ProfileProvider({ children }) {
   const [profile, setProfile] = useState({
-    name:   "Tushar Mehta",
-    email:  "tushar@email.com",
-    photo:  null,          // null = show default icon
+    name:  "",
+    email: "",
+    photo: null,
   });
+
+  // ✅ Fetch user data ONCE on app load — fixes navbar photo
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    if (!userId) return;
+
+    axios.get(`https://localhost:7205/api/auth/user/${userId}`)
+      .then(res => {
+        const data = res.data;
+        setProfile({
+          name:  data.fullName  || "",
+          email: data.email     || "",
+          photo: data.photo     || null,
+        });
+      })
+      .catch(err => console.error("ProfileContext fetch error:", err));
+  }, []);
 
   const updatePhoto = (photoUrl) =>
     setProfile(p => ({ ...p, photo: photoUrl }));

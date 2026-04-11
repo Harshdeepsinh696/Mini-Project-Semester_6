@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useNavCount } from "../Context/NavCountContext";
 import axios from "axios";
 import Layout from "../Layout/Layout";
 import MedCard from "../Component/MedCard";
@@ -113,6 +114,7 @@ function groupByDate(items) {
 
 export default function Upcoming() {
   const navigate = useNavigate();
+  const { setUpcomingCount } = useNavCount();
   const todayStr = new Date().toISOString().split("T")[0];
 
   const [activeFilter, setActiveFilter] = useState("All");
@@ -136,7 +138,9 @@ export default function Upcoming() {
       const userId = parseInt(localStorage.getItem("userId"));
       if (!userId) return;
       const res = await axios.get(`${BASE}/api/medicine/upcoming/${userId}?date=${dateStr}`);
-      setMeds(res.data.map(m => toMedCard(m, dateStr)));
+      const mapped = res.data.map(m => toMedCard(m, dateStr));
+      setMeds(mapped);
+      setUpcomingCount(mapped.length); // ✅
     } catch (err) {
       console.error(err);
     } finally { setLoading(false); }
@@ -162,7 +166,9 @@ export default function Upcoming() {
       });
 
       const results = await Promise.all(promises);
-      setMeds(results.flat());
+      const allMeds = results.flat();
+      setMeds(allMeds);
+      setUpcomingCount(allMeds.length); // ✅
     } catch (err) {
       console.error(err);
     } finally { setLoading(false); }

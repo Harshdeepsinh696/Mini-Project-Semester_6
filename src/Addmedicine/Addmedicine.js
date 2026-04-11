@@ -1,6 +1,5 @@
 // ══════════════════════════════════════════════════════════
-//  Addmedicine.jsx  —  "Category" replaced with "Disease" dropdown
-//  Disease list fetched from GET /api/disease/user/{userId}
+//  Addmedicine.jsx  —  updated to match new design system
 // ══════════════════════════════════════════════════════════
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -44,8 +43,8 @@ function StepsBar({ step }) {
     <div className="am-steps">
       {STEPS.map((s, i) => {
         const state = step > s.n ? "s-done" : step === s.n ? "s-active" : "s-pending";
-        const lblColor = step > s.n ? "#16A34A" : step === s.n ? "#2563EB" : "#9096B0";
-        const nameColor = state === "s-pending" ? "#B0BBDA" : "#1A3A6B";
+        const lblColor = step > s.n ? "#16A34A" : step === s.n ? "#4F46E5" : "#94A3B8";
+        const nameColor = state === "s-pending" ? "#94A3B8" : "#0F172A";
         return (
           <div key={s.n} className="am-step" style={{ flex: i < STEPS.length - 1 ? 1 : 0 }}>
             <div className={`am-step-num ${state}`}>{step > s.n ? "✓" : s.n}</div>
@@ -72,13 +71,12 @@ function LivePreview({ f, diseaseName }) {
 
   return (
     <div className="am-mini-card">
-      <style>{`.am-mini-card::before { background: linear-gradient(180deg, #2563EB, #2563EB99); }`}</style>
       <div className="am-mini-top">
         <div className="am-mini-icon-row">
           <div className="am-mini-icon-box">{f.icon}</div>
           <div>
             <div className="am-mini-name">
-              {f.name || <span style={{ color: "#D1DEFF", fontStyle: "italic" }}>Medicine name</span>}
+              {f.name || <span style={{ color: "#CBD5E1", fontStyle: "italic" }}>Medicine name</span>}
             </div>
             <div className="am-mini-badge">
               {diseaseName || "Disease"}
@@ -88,17 +86,17 @@ function LivePreview({ f, diseaseName }) {
         <div className="am-mini-sub">
           {f.dose
             ? <>{f.dose} {f.doseUnit} · {f.qty || "—"} {f.form}</>
-            : <span style={{ color: "#D1DEFF", fontStyle: "italic" }}>Dose · Quantity · Form</span>}
+            : <span style={{ color: "#CBD5E1", fontStyle: "italic" }}>Dose · Quantity · Form</span>}
         </div>
         <div className="am-mini-refill">
-          <div className="am-mini-ring" style={{ borderColor: isLow ? "#EF4444" : "#2563EB" }}>
-            <span className="am-mini-ring-n" style={{ color: isLow ? "#EF4444" : "#1A3A6B" }}>
+          <div className="am-mini-ring" style={{ borderColor: isLow ? "#E11D48" : "#4F46E5" }}>
+            <span className="am-mini-ring-n" style={{ color: isLow ? "#E11D48" : "#0F172A" }}>
               {f.refillLeft || "—"}
             </span>
             <span className="am-mini-ring-l">left</span>
           </div>
           <div>
-            <div className="am-mini-rs" style={{ color: isLow ? "#EF4444" : "#1A3A6B" }}>
+            <div className="am-mini-rs" style={{ color: isLow ? "#E11D48" : "#0F172A" }}>
               {isLow ? "⚠ Low stock" : "Refill status"}
             </div>
             <div className="am-mini-rp">{f.refillTotal ? `${refillPct}% remaining` : "—"}</div>
@@ -171,8 +169,6 @@ export default function AddMedicine() {
 
   const userId = parseInt(localStorage.getItem("userId"));
 
-  
-
   const set = (k, v) => setF(p => ({ ...p, [k]: v }));
   const tog = (k, v) => setF(p => ({
     ...p,
@@ -206,7 +202,6 @@ export default function AddMedicine() {
         PrescribedBy: f.doctor || "",
         Notes: f.note || "",
         DiseaseName: f.diseaseName || "",
-
         Schedule: {
           MealTiming: f.meal || "After Meal",
           StartDate: f.startDate || new Date().toISOString(),
@@ -274,7 +269,7 @@ export default function AddMedicine() {
             {step === 1 && (<>
               <div className="am-panel">
                 <div className="am-panel-hd">
-                  <div className="am-panel-icon" style={{ background: "#EFF6FF" }}>🎨</div>
+                  <div className="am-panel-icon" style={{ background: "#EEF2FF" }}>🎨</div>
                   <div className="am-panel-title">Appearance</div>
                   <div className="am-panel-sub">Icon shown on your card</div>
                 </div>
@@ -291,40 +286,29 @@ export default function AddMedicine() {
 
               <div className="am-panel">
                 <div className="am-panel-hd">
-                  <div className="am-panel-icon" style={{ background: "#DBEAFE" }}>📋</div>
+                  <div className="am-panel-icon" style={{ background: "#EEF2FF" }}>📋</div>
                   <div className="am-panel-title">Medicine Details</div>
                 </div>
                 <div className="am-g2">
-
-                  {/* Name */}
                   <div className="am-field">
                     <div className="am-lbl">Medicine Name <span className="am-req">*</span></div>
                     <input className="am-input"
                       placeholder="e.g. Metformin, Aspirin, Vitamin D…"
                       value={f.name} onChange={e => set("name", e.target.value)} />
                   </div>
-
-                  {/* ── DISEASE (replaces Category) ── */}
-                  {/* ── DISEASE — plain text input ── */}
                   <div className="am-field">
                     <div className="am-lbl">Disease / Condition</div>
-                    <input
-                      className="am-input"
+                    <input className="am-input"
                       placeholder="e.g. Type 2 Diabetes, Hypertension…"
                       value={f.diseaseName}
-                      onChange={e => set("diseaseName", e.target.value)}
-                    />
+                      onChange={e => set("diseaseName", e.target.value)} />
                   </div>
-                  {/* Form */}
                   <div className="am-field">
                     <div className="am-lbl">Medicine Form</div>
-                    <select className="am-select" value={f.form}
-                      onChange={e => set("form", e.target.value)}>
+                    <select className="am-select" value={f.form} onChange={e => set("form", e.target.value)}>
                       {FORMS.map(fm => <option key={fm}>{fm}</option>)}
                     </select>
                   </div>
-
-                  {/* Dosage */}
                   <div className="am-field">
                     <div className="am-lbl">Dosage <span className="am-req">*</span></div>
                     <div style={{ display: "flex", gap: 8 }}>
@@ -353,22 +337,16 @@ export default function AddMedicine() {
                       </select>
                     </div>
                   </div>
-
-                  {/* Quantity */}
                   <div className="am-field">
                     <div className="am-lbl">Quantity per Dose</div>
                     <input className="am-input" placeholder="e.g. 1 tablet, 2 capsules"
                       value={f.qty} onChange={e => set("qty", e.target.value)} />
                   </div>
-
-                  {/* Doctor */}
                   <div className="am-field">
                     <div className="am-lbl">Prescribed by / Doctor</div>
                     <input className="am-input" placeholder="e.g. Dr. Sharma"
                       value={f.doctor} onChange={e => set("doctor", e.target.value)} />
                   </div>
-
-                  {/* Notes */}
                   <div className="am-field" style={{ gridColumn: "span 2" }}>
                     <div className="am-lbl">Notes / Special Instructions</div>
                     <textarea className="am-textarea am-input"
@@ -380,7 +358,7 @@ export default function AddMedicine() {
 
               <div className="am-panel">
                 <div className="am-panel-hd">
-                  <div className="am-panel-icon" style={{ background: "#DBEAFE" }}>⚠️</div>
+                  <div className="am-panel-icon" style={{ background: "#FFF1F2" }}>⚠️</div>
                   <div className="am-panel-title">Side Effect Warnings</div>
                   <div className="am-panel-sub">shown as ⓘ tag on card</div>
                 </div>
@@ -397,7 +375,7 @@ export default function AddMedicine() {
             {step === 2 && (<>
               <div className="am-panel">
                 <div className="am-panel-hd">
-                  <div className="am-panel-icon" style={{ background: "#D1FAE5" }}>📅</div>
+                  <div className="am-panel-icon" style={{ background: "#F0FDF4" }}>📅</div>
                   <div className="am-panel-title">Frequency &amp; Days</div>
                 </div>
                 <div className="am-field" style={{ marginBottom: 14 }}>
@@ -421,7 +399,7 @@ export default function AddMedicine() {
 
               <div className="am-panel">
                 <div className="am-panel-hd">
-                  <div className="am-panel-icon" style={{ background: "#DBEAFE" }}>🕐</div>
+                  <div className="am-panel-icon" style={{ background: "#EEF2FF" }}>🕐</div>
                   <div className="am-panel-title">Dose Times</div>
                   <div className="am-panel-sub">tap to select</div>
                 </div>
@@ -448,7 +426,7 @@ export default function AddMedicine() {
 
               <div className="am-panel">
                 <div className="am-panel-hd">
-                  <div className="am-panel-icon" style={{ background: "#FEF3C7" }}>🍽️</div>
+                  <div className="am-panel-icon" style={{ background: "#FFFBEB" }}>🍽️</div>
                   <div className="am-panel-title">Meal Timing</div>
                 </div>
                 <div className="am-chips">
@@ -472,7 +450,7 @@ export default function AddMedicine() {
                       value={f.startDate} onChange={e => set("startDate", e.target.value)} />
                   </div>
                   <div className="am-field">
-                    <div className="am-lbl">End Date <span style={{ color: "#9096B0", fontSize: 10, textTransform: "none" }}>(optional)</span></div>
+                    <div className="am-lbl">End Date <span style={{ color: "#94A3B8", fontSize: 10, textTransform: "none" }}>(optional)</span></div>
                     <input className="am-input" type="date"
                       value={f.endDate} onChange={e => set("endDate", e.target.value)} />
                   </div>
@@ -484,7 +462,7 @@ export default function AddMedicine() {
             {step === 3 && (<>
               <div className="am-panel">
                 <div className="am-panel-hd">
-                  <div className="am-panel-icon" style={{ background: "#DBEAFE" }}>📦</div>
+                  <div className="am-panel-icon" style={{ background: "#EEF2FF" }}>📦</div>
                   <div className="am-panel-title">Stock Management</div>
                 </div>
                 <div className="am-g3" style={{ marginBottom: 12 }}>
@@ -529,15 +507,15 @@ export default function AddMedicine() {
 
               <div className="am-panel">
                 <div className="am-panel-hd">
-                  <div className="am-panel-icon" style={{ background: "#FEF9C3" }}>🔔</div>
+                  <div className="am-panel-icon" style={{ background: "#FFFBEB" }}>🔔</div>
                   <div className="am-panel-title">Alerts &amp; Reminders</div>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                   {[
-                    { k: "reminders", ico: "🔔", name: "Dose Reminders", desc: "Notify at each scheduled dose time" },
-                    { k: "missedAlert", ico: "⚠️", name: "Missed Dose Alert", desc: "Alert when a dose is not recorded" },
-                    { k: "lowStock", ico: "📦", name: "Low Stock Warning", desc: "Warn when pills fall below threshold" },
-                    { k: "refillReminder", ico: "🔄", name: "Refill Reminder", desc: "Remind to buy more before running out" },
+                    { k: "reminders",      ico: "🔔", name: "Dose Reminders",    desc: "Notify at each scheduled dose time" },
+                    { k: "missedAlert",    ico: "⚠️", name: "Missed Dose Alert",  desc: "Alert when a dose is not recorded" },
+                    { k: "lowStock",       ico: "📦", name: "Low Stock Warning",  desc: "Warn when pills fall below threshold" },
+                    { k: "refillReminder", ico: "🔄", name: "Refill Reminder",    desc: "Remind to buy more before running out" },
                   ].map(({ k, ico, name, desc }) => (
                     <div key={k} className="am-toggle-row">
                       <div className="am-toggle-left">
@@ -558,7 +536,7 @@ export default function AddMedicine() {
 
               <div className="am-panel">
                 <div className="am-panel-hd">
-                  <div className="am-panel-icon" style={{ background: "#FEE2E2" }}>🎯</div>
+                  <div className="am-panel-icon" style={{ background: "#FFF1F2" }}>🎯</div>
                   <div className="am-panel-title">Priority Level</div>
                   <div className="am-panel-sub">affects sorting &amp; badge colour</div>
                 </div>

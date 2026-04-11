@@ -177,11 +177,10 @@ export default function LandingPage() {
       </header>
 
       {/* ══ HERO ══ */}
-      <section className="lp-hero" style={{ background: "#0b1120", backgroundColor: "#0b1120" }}>
+      <section className="lp-hero lp-grid-bg" style={{ background: "#0b1120", backgroundColor: "#0b1120" }}>
         <div className="lp-hero-bg">
           <div className="lp-blob lp-blob-1" />
           <div className="lp-blob lp-blob-2" />
-          <div className="lp-hero-grid" />
         </div>
 
         <div className="lp-hero-inner lp-grid lp-grid--center">

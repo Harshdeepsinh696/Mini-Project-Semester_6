@@ -502,14 +502,6 @@ html, body, #root {
   /* animation removed */
 }
 /* blob keyframes removed */
-.lp-hero-grid {
-  position: absolute; inset: 0;
-  background-image:
-    linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
-  background-size: 68px 68px;
-  mask-image: radial-gradient(ellipse 75% 75% at 50% 45%, black 30%, transparent 100%);
-}
 
 .lp-hero-inner {
   position: relative;
@@ -838,7 +830,7 @@ html, body, #root {
 }
 .lp-grid-bg::before {
   content: '';
-  position: absolute;
+  position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 0;
@@ -853,35 +845,12 @@ html, body, #root {
 .lp-grid-bg > * { position: relative; z-index: 1; }
 
 /* Features — grid fades from top */
-.lp-features.lp-grid-bg::before {
-  mask-image: radial-gradient(ellipse 100% 80% at 50% 0%, black 10%, transparent 90%);
-  -webkit-mask-image: radial-gradient(ellipse 100% 80% at 50% 0%, black 10%, transparent 90%);
-  background-size: 56px 56px;
-}
+
 
 /* How it works — grid centered */
-.lp-how.lp-grid-bg::before {
-  mask-image: radial-gradient(ellipse 90% 80% at 50% 50%, black 20%, transparent 100%);
-  -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 50%, black 20%, transparent 100%);
-  background-image:
-    linear-gradient(rgba(34,197,94,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(34,197,94,0.04) 1px, transparent 1px);
-  background-size: 64px 64px;
-}
 
 /* Reviews — diagonal fade */
-.lp-reviews.lp-grid-bg::before {
-  mask-image: radial-gradient(ellipse 85% 70% at 50% 40%, black 15%, transparent 95%);
-  -webkit-mask-image: radial-gradient(ellipse 85% 70% at 50% 40%, black 15%, transparent 95%);
-  background-size: 52px 52px;
-}
 
-/* FAQ — grid fades to bottom */
-.lp-faq.lp-grid-bg::before {
-  mask-image: radial-gradient(ellipse 90% 80% at 50% 100%, black 10%, transparent 85%);
-  -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 100%, black 10%, transparent 85%);
-  background-size: 56px 56px;
-}
 
 /* ══════════════════════════════════════════════════════════
    FEATURES

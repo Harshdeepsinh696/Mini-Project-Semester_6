@@ -144,7 +144,8 @@
   padding: 6px;
   box-shadow: 0 16px 48px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.04);
   z-index: 999;
-  animation: pdIn 0.18s cubic-bezier(0.22,1,0.36,1) both;
+  /* animation: pdIn 0.18s cubic-bezier(0.22,1,0.36,1) both; */
+  animation: fadeIn 0.2s ease;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -152,6 +153,11 @@
 @keyframes pdIn {
   from { opacity: 0; transform: translateY(-8px) scale(0.97); }
   to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ── Header ── */

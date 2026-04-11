@@ -1,7 +1,7 @@
 import React from "react";
 import "./RefillRing.css";
 
-export default function RefillRing({ left, total, color, colorGradStart, colorGradEnd }) {
+export default function RefillRing({ left, total }) {
   const pct = left / total;
   const r = 18;
   const circ = 2 * Math.PI * r;
@@ -9,21 +9,18 @@ export default function RefillRing({ left, total, color, colorGradStart, colorGr
   const isLow = left <= 7;
   const id = `rg-${left}-${total}`;
 
+  const trackColor = "#E0E7FF";
+  const fillColor = isLow ? "#E11D48" : "#4F46E5";
+
   return (
     <div className="refill-ring-wrap">
-      <svg width="52" height="52" viewBox="0 0 52 52">
-        <defs>
-          <linearGradient id={id} x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor={isLow ? "#EF4444" : colorGradStart} />
-            <stop offset="100%" stopColor={isLow ? "#F87171" : colorGradEnd} />
-          </linearGradient>
-        </defs>
-        <circle cx="26" cy="26" r={r} fill="none" stroke="#E8EDFF" strokeWidth="5" />
+      <svg width="50" height="50" viewBox="0 0 50 50">
+        <circle cx="25" cy="25" r={r} fill="none" stroke={trackColor} strokeWidth="4.5" />
         <circle
-          cx="26" cy="26" r={r}
+          cx="25" cy="25" r={r}
           fill="none"
-          stroke={`url(#${id})`}
-          strokeWidth="5"
+          stroke={fillColor}
+          strokeWidth="4.5"
           strokeDasharray={`${dash} ${circ}`}
           strokeLinecap="round"
           strokeDashoffset={circ * 0.25}
@@ -31,7 +28,7 @@ export default function RefillRing({ left, total, color, colorGradStart, colorGr
         />
       </svg>
       <div className="refill-ring-inner">
-        <span className="refill-num" style={{ color: isLow ? "#EF4444" : color }}>{left}</span>
+        <span className="refill-num" style={{ color: isLow ? "#E11D48" : "#4F46E5" }}>{left}</span>
         <span className="refill-label">left</span>
       </div>
     </div>

@@ -4,15 +4,16 @@
 // ══════════════════════════════════════════════════════════
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useNavCount } from "../Context/NavCountContext";
 import ProfileDropdown from "../Profile/ProfileDropdown";
+import { useProfile } from "../Context/ProfileContext";
 import "./Layout.css";
 
 /* ── Route map ── */
 const NAV_ROUTES = {
-  Today:    "/today",
+  Today: "/today",
   Upcoming: "/upcoming",
-  History:  "/history",
-  Settings: "/settings",
+  History: "/history",
 };
 
 /* ── Nav items ── */
@@ -20,7 +21,6 @@ const navItems = [
   {
     label: "Today",
     group: "main",
-    count: 2,
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
         strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
@@ -34,7 +34,6 @@ const navItems = [
   {
     label: "Upcoming",
     group: "main",
-    count: 6,
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
         strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
@@ -54,18 +53,7 @@ const navItems = [
         <line x1="9" y1="13" x2="15" y2="13" />
       </svg>
     ),
-  },
-  {
-    label: "Settings",
-    group: "more",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-        strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
-        <circle cx="12" cy="12" r="3" />
-        <path d="M19.07 4.93l-1.41 1.41M5.34 18.66l-1.41 1.41M21 12h-2M5 12H3M18.66 18.66l-1.41-1.41M6.34 5.34L4.93 3.93M12 21v-2M12 5V3" />
-      </svg>
-    ),
-  },
+  }
 ];
 
 function HamburgerIcon() {
@@ -93,6 +81,8 @@ function CloseIcon() {
 function SidebarContent({ onClose }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { todayCount, upcomingCount } = useNavCount();
+  const { profile } = useProfile();
 
   const activeLabel = Object.entries(NAV_ROUTES).find(
     ([, path]) => location.pathname === path
@@ -136,14 +126,16 @@ function SidebarContent({ onClose }) {
           {activeLabel === item.label && <div className="nav-active-bar" />}
           {item.icon}
           {item.label}
-          {item.count != null && (
-            <span className="nav-count">{item.count}</span>
+          {item.label === "Today" && todayCount > 0 && (
+            <span className="nav-count">{todayCount}</span>
+          )}
+          {item.label === "Upcoming" && upcomingCount > 0 && (
+            <span className="nav-count">{upcomingCount}</span>
           )}
         </button>
       ))}
 
       <div className="nav-divider" />
-      <div className="nav-label">More</div>
       {moreItems.map((item) => (
         <button
           key={item.label}
@@ -154,6 +146,26 @@ function SidebarContent({ onClose }) {
           {item.label}
         </button>
       ))}
+      <div className="sidebar-user" onClick={() => navigate("/profile")}>
+        <div className="sidebar-user-avatar">
+          {profile.photo ? (
+            <img
+              src={profile.photo}
+              alt="Profile"
+              className="pp-avatar-img"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = "/download.png";
+              }}
+            />
+          ) : null}
+        </div>
+
+        <div className="sidebar-user-info">
+          <div className="sidebar-user-name">{profile.name}</div>
+          <div className="sidebar-user-email">{profile.email}</div>
+        </div>
+      </div>
     </>
   );
 }
